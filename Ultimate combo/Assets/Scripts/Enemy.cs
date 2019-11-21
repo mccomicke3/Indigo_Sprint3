@@ -8,20 +8,26 @@ public class Enemy : ScriptableObject
     public static string[] nameList = { "Tom", "Geoff", "Jack", "Jeremy", "Trevor", "Ryan", "Bob", "Billy", "Kevin", "Jeff", "Steve", "Sarah", "Andrew", "Cindy", "Vincent", "Katie", "Lisa", "Eric", "Brock", "Brocc", "Ash", "Ashley" };
     public string enemyName = "Brocc";
     public int level = 1;
-    public int[] reactions = new int[4];
+    public List<Reactions> reactions;
     public Sprite enemyImage = null;
+    public int[,] testReactions;
     public Enemy(int level = 0)
     {
         enemyName = nameList[Random.Range(0,nameList.Length)];
         int reactionAmount = 4 + (level);
         reactions = NewReactions(reactionAmount);
     }
-    public int[] NewReactions(int length)
+    public List<Reactions> NewReactions(int length)
     {
-        int[] newReactions = new int[length];
+        List<Reactions> newReactions = new List<Reactions>();
         for (int i=0; i < length; i++)
         {
-            newReactions[i] = Random.Range(0, 4);
+            newReactions.Add(new Reactions());
+            int randReactions = Random.Range(1, 4);
+            for (int r = 0; r < randReactions; r++)
+            {
+                newReactions[i].reactionSet.Add(Random.Range(0, 4));
+            }
         }
         return newReactions;
     }
@@ -36,4 +42,9 @@ public class Enemy : ScriptableObject
     {
         
     }
+}
+[System.Serializable]
+public class Reactions
+{
+    public List<int> reactionSet = new List<int>();
 }

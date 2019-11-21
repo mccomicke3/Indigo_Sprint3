@@ -34,7 +34,17 @@ public class EnemyScript : MonoBehaviour
         {
             enemyInfo = new Enemy(Random.Range(0,5));
             if (enemyNameText != null) enemyNameText.text = enemyInfo.enemyName;
-            if (enemyHealthText != null) enemyHealthText.text = "HP: " + enemyInfo.reactions.Length;
+            if (enemyHealthText != null) enemyHealthText.text = "HP: " + enemyInfo.reactions.Count;
+            //Debug.Log("ReactionList: " + enemyInfo.reactions.ToArray() + ":" + enemyInfo.reactions.Count);
+            for(int i = 0;i< enemyInfo.reactions.Count; i++)
+            {
+                //Debug.Log("Reaction " + i + ": "+ enemyInfo.reactions[i].ToArray() + ":" + enemyInfo.reactions[i].Count);
+                for (int c = 0; c < enemyInfo.reactions[i].reactionSet.Count; c++)
+                {
+                    Debug.Log(enemyInfo.enemyName+ " " + i + "-" + c + ":" + enemyInfo.reactions[i].reactionSet[c]);
+                }
+
+            }
             testDelay = Time.time + 0.5f;
         }
     }
@@ -42,6 +52,10 @@ public class EnemyScript : MonoBehaviour
     {
         if (type == prevAttack) return;
         attackSequence.Add(type);
+        if (CheckSequence())
+        {
+            TakeDamage();
+        }
         UpdateAttackSequence();
         prevAttack = type;
     }
@@ -51,9 +65,21 @@ public class EnemyScript : MonoBehaviour
         UpdateAttackSequence();
         prevAttack = -1;
     }
-    public void Attack()
+    public bool CheckSequence()
     {
-        Debug.Log("You attacked");
+        bool interrupted = false;
+        for (int i = 0; i < enemyInfo.reactions.Count; i++)
+        {
+            // error here
+            Debug.Log(enemyInfo.reactions[i].reactionSet.Count+":"+attackSequence[i]);
+            //interrupted = (enemyInfo.reactions[i].reactionSet.Contains(attackSequence[i]));
+        }
+        return interrupted;
+    }
+    public void TakeDamage()
+    {
+        Debug.Log("You got attacked");
+        attackSequence.RemoveAt(attackSequence.Count - 1);
     }
     void UpdateAttackSequence()
     {

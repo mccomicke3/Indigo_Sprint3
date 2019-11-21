@@ -10,9 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e132aa43869cbe4db92a30208f97b2b, type: 3}
-  m_Name: New Enemy
+  m_Name: Brocc
   m_EditorClassIdentifier: 
   enemyName: Brocc
   level: 1
-  reactions: 00000000000000000000000000000000
+  reactions:
+  - reactionSet: 0000000000000000
+  - reactionSet: 
+  - reactionSet: 
+  - reactionSet: 
+  - reactionSet: 
   enemyImage: {fileID: 0}
