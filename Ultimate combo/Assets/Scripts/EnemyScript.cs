@@ -20,11 +20,13 @@ public class EnemyScript : MonoBehaviour
     [SerializeField]
     KeyCode testKey = KeyCode.T;
 
-    float testDelay = 0;
+    float testDelay = 0, winDelay = 0;
+    bool win = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        NewEnemy();
     }
 
     // Update is called once per frame
@@ -32,20 +34,32 @@ public class EnemyScript : MonoBehaviour
     {
         if ((test && Input.GetKey(testKey)) && testDelay < Time.time)
         {
-            enemyInfo = new Enemy(Random.Range(0,5));
-            if (enemyNameText != null) enemyNameText.text = enemyInfo.enemyName;
-            if (enemyHealthText != null) enemyHealthText.text = "HP: " + enemyInfo.reactions.Count;
-            //Debug.Log("ReactionList: " + enemyInfo.reactions.ToArray() + ":" + enemyInfo.reactions.Count);
-            for(int i = 0;i< enemyInfo.reactions.Count; i++)
+            NewEnemy();
+            testDelay = Time.time + 0.5f;
+        }
+        if (winDelay > 0 && winDelay < Time.time)
+        {
+            win = false;
+            ClearSequence();
+            NewEnemy();
+            winDelay = 0;
+        }
+    }
+    public void NewEnemy()
+    {
+        bool debugging = true;
+        enemyInfo = new Enemy(Random.Range(0, 5));
+        if (enemyNameText != null) enemyNameText.text = enemyInfo.enemyName;
+        if (enemyHealthText != null) enemyHealthText.text = "HP: " + enemyInfo.reactions.Count;
+        if (debugging)
+        {
+            for (int i = 0; i < enemyInfo.reactions.Count; i++)
             {
-                //Debug.Log("Reaction " + i + ": "+ enemyInfo.reactions[i].ToArray() + ":" + enemyInfo.reactions[i].Count);
                 for (int c = 0; c < enemyInfo.reactions[i].reactionSet.Count; c++)
                 {
-                    Debug.Log(enemyInfo.enemyName+ " " + i + "-" + c + ":" + enemyInfo.reactions[i].reactionSet[c]);
+                    Debug.Log(enemyInfo.enemyName + " " + i + "-" + c + ":" + enemyInfo.reactions[i].reactionSet[c]);
                 }
-
             }
-            testDelay = Time.time + 0.5f;
         }
     }
     public void AddCombo(int type)
@@ -55,6 +69,20 @@ public class EnemyScript : MonoBehaviour
         if (CheckSequence())
         {
             TakeDamage();
+        }
+        else
+        {
+            if (CheckWin())
+            {
+                Debug.Log("You Ween");
+                if (!win)
+                {
+                    win = !win;
+                    winDelay = Time.time + 3;
+                }
+                else
+                    attackSequence.RemoveAt(attackSequence.Count - 1);
+            }
         }
         UpdateAttackSequence();
         prevAttack = type;
@@ -70,9 +98,10 @@ public class EnemyScript : MonoBehaviour
         bool interrupted = false;
         for (int i = 0; i < enemyInfo.reactions.Count; i++)
         {
-            // error here
-            Debug.Log(enemyInfo.reactions[i].reactionSet.Count+":"+attackSequence[i]);
-            //interrupted = (enemyInfo.reactions[i].reactionSet.Contains(attackSequence[i]));
+            if (i < attackSequence.Count)
+            {
+                interrupted = (enemyInfo.reactions[i].reactionSet.Contains(attackSequence[i]));
+            }
         }
         return interrupted;
     }
@@ -80,6 +109,12 @@ public class EnemyScript : MonoBehaviour
     {
         Debug.Log("You got attacked");
         attackSequence.RemoveAt(attackSequence.Count - 1);
+    }
+    public bool CheckWin()
+    {
+        bool win = false;
+        win = attackSequence.Count >= enemyInfo.reactions.Count;
+        return win;
     }
     void UpdateAttackSequence()
     {
