@@ -13,20 +13,22 @@ public class EnemyScript : MonoBehaviour
     Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null;
 
     int prevAttack = -1;
-    List<int> attackSequence = new List<int>();
+    public List<int> attackSequence = new List<int>();
     [Header("Test")]
     [SerializeField]
     bool test = false;
     [SerializeField]
     KeyCode testKey = KeyCode.T;
 
-    float testDelay = 0, winDelay = 0;
+    float testDelay = 0, winDelay = 0, colorDelay = 0;
+    Color startColor;
     bool win = false;
 
     // Start is called before the first frame update
     void Start()
     {
         NewEnemy();
+        if (spriteRef != null) startColor = spriteRef.color;
     }
 
     // Update is called once per frame
@@ -43,6 +45,11 @@ public class EnemyScript : MonoBehaviour
             ClearSequence();
             NewEnemy();
             winDelay = 0;
+        }
+        if (colorDelay > 0 && colorDelay < Time.time)
+        {
+            spriteRef.color = startColor;
+            colorDelay = 0;
         }
     }
     public void NewEnemy()
@@ -65,24 +72,9 @@ public class EnemyScript : MonoBehaviour
     public void AddCombo(int type)
     {
         if (type == prevAttack) return;
-        attackSequence.Add(type);
-        if (CheckSequence())
+        if (!win)
         {
-            TakeDamage();
-        }
-        else
-        {
-            if (CheckWin())
-            {
-                Debug.Log("You Ween");
-                if (!win)
-                {
-                    win = !win;
-                    winDelay = Time.time + 3;
-                }
-                else
-                    attackSequence.RemoveAt(attackSequence.Count - 1);
-            }
+            attackSequence.Add(type);
         }
         UpdateAttackSequence();
         prevAttack = type;
@@ -93,22 +85,47 @@ public class EnemyScript : MonoBehaviour
         UpdateAttackSequence();
         prevAttack = -1;
     }
-    public bool CheckSequence()
+    public int CheckSequence()
     {
-        bool interrupted = false;
+        int interrupted = -1;
         for (int i = 0; i < enemyInfo.reactions.Count; i++)
         {
             if (i < attackSequence.Count)
             {
-                interrupted = (enemyInfo.reactions[i].reactionSet.Contains(attackSequence[i]));
+                if (enemyInfo.reactions[i].reactionSet.Contains(attackSequence[i]))
+                    interrupted = i;
             }
         }
         return interrupted;
     }
     public void TakeDamage()
     {
-        Debug.Log("You got attacked");
-        attackSequence.RemoveAt(attackSequence.Count - 1);
+        int failedAttack = CheckSequence() -1;
+        Debug.Log(failedAttack);
+        if (failedAttack > -1)
+        {
+            for (int i = attackSequence.Count-1;i > 0; i--)
+            {
+                if (i > failedAttack)
+                    attackSequence.RemoveAt(i);
+            }
+            if (spriteRef != null) spriteRef.color = Color.red;
+            colorDelay = Time.time + 1;
+        }
+        else
+        {
+            if (CheckWin())
+            {
+                if (!win)
+                {
+                    win = !win;
+                    if (spriteRef != null) spriteRef.color = Color.green;
+                    colorDelay = Time.time + 1;
+                    winDelay = Time.time + 3;
+                }
+            }
+        }
+        UpdateAttackSequence();
     }
     public bool CheckWin()
     {

@@ -7,7 +7,6 @@ public class Enemy : ScriptableObject
 {
     public static string[] nameList = { "Tom", "Geoff", "Jack", "Jeremy", "Trevor", "Ryan", "Bob", "Billy", "Kevin", "Jeff", "Steve", "Sarah", "Andrew", "Cindy", "Vincent", "Katie", "Lisa", "Eric", "Brock", "Brocc", "Ash", "Ashley" };
     public string enemyName = "Brocc";
-    public int level = 1;
     public List<Reactions> reactions;
     public Sprite enemyImage = null;
     public int[,] testReactions;
