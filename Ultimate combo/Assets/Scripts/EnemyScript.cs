@@ -8,27 +8,35 @@ public class EnemyScript : MonoBehaviour
     [SerializeField]
     Enemy enemyInfo = null;
     [SerializeField]
-    SpriteRenderer spriteRef = null;
+    SpriteRenderer spriteRef = null, headRef = null, bodyRef = null, legsRef = null;
     [SerializeField]
     Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null;
+    [SerializeField]
+    Slider enemyHealthBar = null, playerHealthBar = null;
+    [SerializeField]
+    List<Reactions> currentEnemyReactions = new List<Reactions>();
+    [SerializeField]
+    List<Sprite> headList = new List<Sprite>(), bodyList = new List<Sprite>(), legsList = new List<Sprite>();
 
     int prevAttack = -1;
     public List<int> attackSequence = new List<int>();
     [Header("Test")]
     [SerializeField]
-    bool test = false;
+    bool test = false, debugging = false;
     [SerializeField]
     KeyCode testKey = KeyCode.T;
 
     float testDelay = 0, winDelay = 0, colorDelay = 0;
     Color startColor;
     bool win = false;
+    float playerHp = 5, enemyHp = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         NewEnemy();
         if (spriteRef != null) startColor = spriteRef.color;
+        if (playerHealthBar != null) playerHealthBar.maxValue = playerHp;
     }
 
     // Update is called once per frame
@@ -54,10 +62,11 @@ public class EnemyScript : MonoBehaviour
     }
     public void NewEnemy()
     {
-        bool debugging = true;
         enemyInfo = new Enemy(Random.Range(0, 5));
         if (enemyNameText != null) enemyNameText.text = enemyInfo.enemyName;
-        if (enemyHealthText != null) enemyHealthText.text = "HP: " + enemyInfo.reactions.Count;
+        //if (enemyHealthText != null) enemyHealthText.text = "HP: " + enemyInfo.reactions.Count;
+        enemyHp = enemyInfo.reactions.Count;
+        if (enemyHealthBar != null) enemyHealthBar.maxValue = enemyHp;
         if (debugging)
         {
             for (int i = 0; i < enemyInfo.reactions.Count; i++)
@@ -67,6 +76,25 @@ public class EnemyScript : MonoBehaviour
                     Debug.Log(enemyInfo.enemyName + " " + i + "-" + c + ":" + enemyInfo.reactions[i].reactionSet[c]);
                 }
             }
+        }
+        currentEnemyReactions = enemyInfo.reactions;
+        RestorePlayerHealth();
+        StartCoroutine("UpdateHealth");
+        RandomizeEnemyParts();
+    }
+    public void RandomizeEnemyParts()
+    {
+        if (headList.Count > 1)
+        {
+            if (headRef != null) headRef.sprite = headList[Random.Range(0, headList.Count)];
+        }
+        if (bodyList.Count > 1)
+        {
+            if (bodyRef != null) bodyRef.sprite = bodyList[Random.Range(0, bodyList.Count)];
+        }
+        if (legsList.Count > 1)
+        {
+            if (legsRef != null) legsRef.sprite = legsList[Random.Range(0, legsList.Count)];
         }
     }
     public void AddCombo(int type)
@@ -100,17 +128,19 @@ public class EnemyScript : MonoBehaviour
     }
     public void TakeDamage()
     {
-        int failedAttack = CheckSequence() -1;
+        int failedAttack = CheckSequence() - 1;
         Debug.Log(failedAttack);
         if (failedAttack > -1)
         {
-            for (int i = attackSequence.Count-1;i > 0; i--)
+            for (int i = attackSequence.Count - 1; i > 0; i--)
             {
                 if (i > failedAttack)
                     attackSequence.RemoveAt(i);
             }
             if (spriteRef != null) spriteRef.color = Color.red;
             colorDelay = Time.time + 1;
+            playerHp--;
+            Debug.Log("Player HP: " + playerHp);
         }
         else
         {
@@ -126,6 +156,9 @@ public class EnemyScript : MonoBehaviour
             }
         }
         UpdateAttackSequence();
+        enemyHp = enemyInfo.reactions.Count - attackSequence.Count;
+        Debug.Log("Enemy HP: " + enemyHp);
+        StartCoroutine("UpdateHealth");
     }
     public bool CheckWin()
     {
@@ -136,14 +169,60 @@ public class EnemyScript : MonoBehaviour
     void UpdateAttackSequence()
     {
         string tempText = "Attacks: ";
-        for (int i = 0; i < attackSequence.Count;i++)
+        for (int i = 0; i < attackSequence.Count; i++)
         {
             if (i > 0)
             {
                 tempText += "/";
             }
-            tempText += attackSequence[i];
+            if (debugging)
+            {
+                tempText += attackSequence[i];
+            }
+            else
+            {
+                string attackName = "";
+                switch (attackSequence[i])
+                {
+                    case 0:
+                        attackName = "P";
+                        break;
+                    case 1:
+                        attackName = "K";
+                        break;
+                    case 2:
+                        attackName = "T";
+                        break;
+                    case 3:
+                        attackName = "G";
+                        break;
+                }
+                tempText += attackName;
+            }
         }
         if (attackSequenceText != null) attackSequenceText.text = tempText;
+    }
+    void RestorePlayerHealth()
+    {
+        playerHp = 5;
+    }
+    IEnumerator UpdateHealth()
+    {
+        while (Mathf.Abs(enemyHealthBar.value - enemyHp) > 0.01f)
+        {
+            yield return new WaitForSeconds(0.5f);
+            if (enemyHealthBar != null)
+            {
+                enemyHealthBar.value = Mathf.Lerp(enemyHealthBar.value, enemyHp, 10);
+            }
+        }
+        while (Mathf.Abs(playerHealthBar.value - playerHp) > 0.01f)
+        {
+            yield return new WaitForSeconds(0.5f);
+            if (playerHealthBar != null)
+            {
+                playerHealthBar.value = Mathf.Lerp(playerHealthBar.value, playerHp, 3);
+            }
+        }
     }
 }
