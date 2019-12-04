@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\Enemy.cs" />
     <Compile Include="Assets\Scripts\EnemyScript.cs" />
     <Compile Include="Assets\Scripts\EnemySettings.cs" />
+    <Compile Include="Assets\Scripts\Volume.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/shark_000/Documents/GitHub/Indigo_Sprint3/Ultimate combo/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

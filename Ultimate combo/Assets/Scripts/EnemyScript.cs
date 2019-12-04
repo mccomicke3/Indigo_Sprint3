@@ -22,9 +22,14 @@ public class EnemyScript : MonoBehaviour
     public List<int> attackSequence = new List<int>();
     [Header("Test")]
     [SerializeField]
-    bool test = false, debugging = false;
-    [SerializeField]
     KeyCode testKey = KeyCode.T;
+    [SerializeField]
+    bool test = false, debugging = false;
+    [Header("Menu")]
+    [SerializeField]
+    GameObject pauseMenu = null;
+    [SerializeField]
+    KeyCode pauseKey = KeyCode.Escape;
 
     float testDelay = 0, winDelay = 0, colorDelay = 0;
     Color startColor;
@@ -58,6 +63,10 @@ public class EnemyScript : MonoBehaviour
         {
             spriteRef.color = startColor;
             colorDelay = 0;
+        }
+        if (Input.GetKeyDown(pauseKey))
+        {
+            ToggleMenu(pauseMenu);
         }
     }
     public void NewEnemy()
@@ -224,5 +233,13 @@ public class EnemyScript : MonoBehaviour
                 playerHealthBar.value = Mathf.Lerp(playerHealthBar.value, playerHp, 3);
             }
         }
+    }
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+    public void ToggleMenu(GameObject menu)
+    {
+        if (menu != null) menu.SetActive(!menu.activeInHierarchy);
     }
 }
