@@ -73,7 +73,7 @@ public class EnemyScript : MonoBehaviour
     {
         enemyInfo = new Enemy(Random.Range(0, 5));
         if (enemyNameText != null) enemyNameText.text = enemyInfo.enemyName;
-        //if (enemyHealthText != null) enemyHealthText.text = "HP: " + enemyInfo.reactions.Count;
+        if (enemyHealthText != null) enemyHealthText.text = "HP: " + enemyInfo.reactions.Count;
         enemyHp = enemyInfo.reactions.Count;
         if (enemyHealthBar != null) enemyHealthBar.maxValue = enemyHp;
         if (debugging)
