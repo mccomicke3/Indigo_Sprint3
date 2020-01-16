@@ -5,10 +5,12 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class Enemy : ScriptableObject
 {
-    public static string[] nameList = { "Tom", "Geoff", "Jack", "Jeremy", "Trevor", "Ryan", "Bob", "Billy", "Kevin", "Jeff", "Steve", "Sarah", "Andrew", "Cindy", "Vincent", "Katie", "Lisa", "Eric", "Brock", "Brocc", "Ash", "Ashley" };
+    public static string[] maleNames = { "Tom", "Geoff", "Jack", "Jeremy", "Trevor", "Ryan", "Bob", "Billy", "Kevin", "Jeff", "Steve", "Andrew", "Vincent", "Eric", "Brock", "Brocc", "Ash" },
+        femaleNames = { "Sarah", "Cindy", "Katie", "Lisa", "Ashley" };
+    public string[] nameList = maleNames;
     public string enemyName = "Brocc";
     public List<Reactions> reactions;
-    public Sprite enemyImage = null;
+    public Sprite enemyImage = null, enemyHead = null, enemyBody = null, enemyLegs = null;
     public int[,] testReactions;
     public Enemy(int level = 0)
     {
@@ -22,7 +24,7 @@ public class Enemy : ScriptableObject
         for (int i=0; i < length; i++)
         {
             newReactions.Add(new Reactions());
-            int randReactions = Random.Range(1, 4);
+            int randReactions = Random.Range(1, 3);
             for (int r = 0; r < randReactions; r++)
             {
                 newReactions[i].reactionSet.Add(Random.Range(0, 4));

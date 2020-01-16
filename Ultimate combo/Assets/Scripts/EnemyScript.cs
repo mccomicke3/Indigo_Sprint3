@@ -6,13 +6,9 @@ using UnityEngine.UI;
 public class EnemyScript : MonoBehaviour
 {
     [SerializeField]
+    GUIManager guiManager = null;
+    [SerializeField]
     Enemy enemyInfo = null;
-    [SerializeField]
-    SpriteRenderer spriteRef = null, headRef = null, bodyRef = null, legsRef = null;
-    [SerializeField]
-    Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null;
-    [SerializeField]
-    Slider enemyHealthBar = null, playerHealthBar = null;
     [SerializeField]
     List<Reactions> currentEnemyReactions = new List<Reactions>();
     [SerializeField]
@@ -40,8 +36,7 @@ public class EnemyScript : MonoBehaviour
     void Start()
     {
         NewEnemy();
-        if (spriteRef != null) startColor = spriteRef.color;
-        if (playerHealthBar != null) playerHealthBar.maxValue = playerHp;
+        if (guiManager != null) guiManager.SetPlayerMaxHP(playerHp);
     }
 
     // Update is called once per frame
@@ -59,23 +54,12 @@ public class EnemyScript : MonoBehaviour
             NewEnemy();
             winDelay = 0;
         }
-        if (colorDelay > 0 && colorDelay < Time.time)
-        {
-            spriteRef.color = startColor;
-            colorDelay = 0;
-        }
-        if (Input.GetKeyDown(pauseKey))
-        {
-            ToggleMenu(pauseMenu);
-        }
     }
     public void NewEnemy()
     {
         enemyInfo = new Enemy(Random.Range(0, 5));
-        if (enemyNameText != null) enemyNameText.text = enemyInfo.enemyName;
-        if (enemyHealthText != null) enemyHealthText.text = "HP: " + enemyInfo.reactions.Count;
+        guiManager.SetEnemyInfo(enemyInfo);
         enemyHp = enemyInfo.reactions.Count;
-        if (enemyHealthBar != null) enemyHealthBar.maxValue = enemyHp;
         if (debugging)
         {
             for (int i = 0; i < enemyInfo.reactions.Count; i++)
@@ -88,22 +72,22 @@ public class EnemyScript : MonoBehaviour
         }
         currentEnemyReactions = enemyInfo.reactions;
         RestorePlayerHealth();
-        StartCoroutine("UpdateHealth");
+        guiManager.StartUpdateHealth(enemyHp, playerHp);
         RandomizeEnemyParts();
     }
     public void RandomizeEnemyParts()
     {
         if (headList.Count > 1)
         {
-            if (headRef != null) headRef.sprite = headList[Random.Range(0, headList.Count)];
+             guiManager.EnemyBodySprite(GUIManager.BodyPart.Head, headList[Random.Range(0, headList.Count)]);
         }
         if (bodyList.Count > 1)
         {
-            if (bodyRef != null) bodyRef.sprite = bodyList[Random.Range(0, bodyList.Count)];
+            guiManager.EnemyBodySprite(GUIManager.BodyPart.Body, bodyList[Random.Range(0, bodyList.Count)]);
         }
         if (legsList.Count > 1)
         {
-            if (legsRef != null) legsRef.sprite = legsList[Random.Range(0, legsList.Count)];
+            guiManager.EnemyBodySprite(GUIManager.BodyPart.Legs, legsList[Random.Range(0, legsList.Count)]);
         }
     }
     public void AddCombo(int type)
@@ -125,10 +109,13 @@ public class EnemyScript : MonoBehaviour
     public int CheckSequence()
     {
         int interrupted = -1;
+        // go through each reaction on the enemy
         for (int i = 0; i < enemyInfo.reactions.Count; i++)
         {
+            // check if it is within the range of the attack sequence
             if (i < attackSequence.Count)
             {
+                // check if the enemy reacts to the specific attack sequence
                 if (enemyInfo.reactions[i].reactionSet.Contains(attackSequence[i]))
                     interrupted = i;
             }
@@ -139,6 +126,7 @@ public class EnemyScript : MonoBehaviour
     {
         int failedAttack = CheckSequence() - 1;
         Debug.Log(failedAttack);
+        // if the attack got interrupted
         if (failedAttack > -1)
         {
             for (int i = attackSequence.Count - 1; i > 0; i--)
@@ -146,8 +134,7 @@ public class EnemyScript : MonoBehaviour
                 if (i > failedAttack)
                     attackSequence.RemoveAt(i);
             }
-            if (spriteRef != null) spriteRef.color = Color.red;
-            colorDelay = Time.time + 1;
+            guiManager.SetSpriteColor(Color.red);
             playerHp--;
             Debug.Log("Player HP: " + playerHp);
         }
@@ -158,16 +145,16 @@ public class EnemyScript : MonoBehaviour
                 if (!win)
                 {
                     win = !win;
-                    if (spriteRef != null) spriteRef.color = Color.green;
-                    colorDelay = Time.time + 1;
+                    guiManager.SetSpriteColor(Color.green);
                     winDelay = Time.time + 3;
                 }
             }
         }
+        ClearSequence();
         UpdateAttackSequence();
         enemyHp = enemyInfo.reactions.Count - attackSequence.Count;
         Debug.Log("Enemy HP: " + enemyHp);
-        StartCoroutine("UpdateHealth");
+        guiManager.StartUpdateHealth(enemyHp, playerHp);
     }
     public bool CheckWin()
     {
@@ -209,37 +196,11 @@ public class EnemyScript : MonoBehaviour
                 tempText += attackName;
             }
         }
-        if (attackSequenceText != null) attackSequenceText.text = tempText;
+        guiManager.UpdateAttackSequenceText(tempText);
     }
     void RestorePlayerHealth()
     {
         playerHp = 5;
-    }
-    IEnumerator UpdateHealth()
-    {
-        while (Mathf.Abs(enemyHealthBar.value - enemyHp) > 0.01f)
-        {
-            yield return new WaitForSeconds(0.5f);
-            if (enemyHealthBar != null)
-            {
-                enemyHealthBar.value = Mathf.Lerp(enemyHealthBar.value, enemyHp, 10);
-            }
-        }
-        while (Mathf.Abs(playerHealthBar.value - playerHp) > 0.01f)
-        {
-            yield return new WaitForSeconds(0.5f);
-            if (playerHealthBar != null)
-            {
-                playerHealthBar.value = Mathf.Lerp(playerHealthBar.value, playerHp, 3);
-            }
-        }
-    }
-    public void QuitGame()
-    {
-        Application.Quit();
-    }
-    public void ToggleMenu(GameObject menu)
-    {
-        if (menu != null) menu.SetActive(!menu.activeInHierarchy);
+        guiManager.StartUpdateHealth(enemyHp, playerHp);
     }
 }

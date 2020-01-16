@@ -12,12 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e132aa43869cbe4db92a30208f97b2b, type: 3}
   m_Name: Brocc
   m_EditorClassIdentifier: 
+  nameList: []
   enemyName: Brocc
-  level: 1
   reactions:
-  - reactionSet: 0000000000000000
-  - reactionSet: 
-  - reactionSet: 
-  - reactionSet: 
-  - reactionSet: 
+  - reactionSet: 0000000001000000
+  - reactionSet: 020000000100000000000000
+  - reactionSet: 03000000
+  - reactionSet: 0300000002000000
+  - reactionSet: 01000000
   enemyImage: {fileID: 0}
+  enemyHead: {fileID: 6933386327017989877, guid: d8c0729e141c5e647afb9feaa42187cd,
+    type: 3}
+  enemyBody: {fileID: 5002554865160910227, guid: d8c0729e141c5e647afb9feaa42187cd,
+    type: 3}
+  enemyLegs: {fileID: -8422823296345707691, guid: d8c0729e141c5e647afb9feaa42187cd,
+    type: 3}

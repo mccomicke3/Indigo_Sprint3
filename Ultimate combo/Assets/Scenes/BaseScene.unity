@@ -1762,16 +1762,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0e63cdf39a47d84a880fa3d25d7875e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  guiManager: {fileID: 832200377}
   enemyInfo: {fileID: 11400000, guid: 945954d9a98fe924c8091a86700d7d25, type: 2}
-  spriteRef: {fileID: 1051148229}
-  headRef: {fileID: 1032488536}
-  bodyRef: {fileID: 503122289}
-  legsRef: {fileID: 2068235270}
-  enemyHealthText: {fileID: 332037814}
-  attackSequenceText: {fileID: 817287385}
-  enemyNameText: {fileID: 1441911944}
-  enemyHealthBar: {fileID: 496946943}
-  playerHealthBar: {fileID: 472725487}
   currentEnemyReactions: []
   headList:
   - {fileID: 6933386327017989877, guid: d8c0729e141c5e647afb9feaa42187cd, type: 3}
@@ -1911,6 +1903,8 @@ GameObject:
   - component: {fileID: 832200376}
   - component: {fileID: 832200375}
   - component: {fileID: 832200374}
+  - component: {fileID: 832200377}
+  - component: {fileID: 832200378}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -1966,6 +1960,47 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &832200377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832200373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5883ae4aaf2378d4c9d54a2d27ab8c71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRef: {fileID: 1051148229}
+  headRef: {fileID: 1032488536}
+  bodyRef: {fileID: 503122289}
+  legsRef: {fileID: 2068235270}
+  enemyHealthText: {fileID: 332037814}
+  attackSequenceText: {fileID: 817287385}
+  enemyNameText: {fileID: 1441911944}
+  enemyHealthBar: {fileID: 496946943}
+  playerHealthBar: {fileID: 472725487}
+  pauseMenu: {fileID: 862925425}
+  pauseKey: 27
+--- !u!114 &832200378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832200373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c0b2cc82c735354a986d39aaedfd127, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInputs:
+  - {fileID: 274676401}
+  - {fileID: 1502659527}
+  - {fileID: 1280484930}
+  - {fileID: 162007000}
+  activeInputs: 01010101
 --- !u!1 &837607387
 GameObject:
   m_ObjectHideFlags: 0
