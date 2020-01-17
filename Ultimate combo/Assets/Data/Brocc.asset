@@ -20,6 +20,13 @@ MonoBehaviour:
   - reactionSet: 03000000
   - reactionSet: 0300000002000000
   - reactionSet: 01000000
+  weaknesses:
+  - weaknessSet:
+    - {x: 0, y: 0}
+    - {x: 0, y: 0}
+  - weaknessSet: []
+  - weaknessSet: []
+  - weaknessSet: []
   enemyImage: {fileID: 0}
   enemyHead: {fileID: 6933386327017989877, guid: d8c0729e141c5e647afb9feaa42187cd,
     type: 3}

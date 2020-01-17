@@ -11,6 +11,11 @@ public class EnemyScript : MonoBehaviour
     Enemy enemyInfo = null;
     [SerializeField]
     List<Reactions> currentEnemyReactions = new List<Reactions>();
+    [Tooltip("x is combo length, y is number of weaknesses")]
+    [SerializeField]
+    Vector2Int weaknessParam = new Vector2Int();
+    [SerializeField]
+    List<Weaknesses> currentWeaknesses = new List<Weaknesses>();
     [SerializeField]
     List<Sprite> headList = new List<Sprite>(), bodyList = new List<Sprite>(), legsList = new List<Sprite>();
 
@@ -54,6 +59,12 @@ public class EnemyScript : MonoBehaviour
             NewEnemy();
             winDelay = 0;
         }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            Debug.Log("weak!");
+            enemyInfo.weaknesses = enemyInfo.NewWeaknesses(weaknessParam.x,weaknessParam.y);
+            currentWeaknesses = enemyInfo.weaknesses;
+        }
     }
     public void NewEnemy()
     {
@@ -71,6 +82,7 @@ public class EnemyScript : MonoBehaviour
             }
         }
         currentEnemyReactions = enemyInfo.reactions;
+        currentWeaknesses = enemyInfo.weaknesses;
         RestorePlayerHealth();
         guiManager.StartUpdateHealth(enemyHp, playerHp);
         RandomizeEnemyParts();

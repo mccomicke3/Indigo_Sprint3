@@ -1765,6 +1765,8 @@ MonoBehaviour:
   guiManager: {fileID: 832200377}
   enemyInfo: {fileID: 11400000, guid: 945954d9a98fe924c8091a86700d7d25, type: 2}
   currentEnemyReactions: []
+  weaknessParam: {x: 4, y: 3}
+  currentWeaknesses: []
   headList:
   - {fileID: 6933386327017989877, guid: d8c0729e141c5e647afb9feaa42187cd, type: 3}
   - {fileID: 2489406627924410689, guid: d8c0729e141c5e647afb9feaa42187cd, type: 3}
