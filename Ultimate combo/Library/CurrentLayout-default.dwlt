@@ -114,7 +114,7 @@ MonoBehaviour:
   m_MinSize: {x: 681, y: 344}
   m_MaxSize: {x: 12006, y: 8044}
   vertical: 0
-  controlID: 53
+  controlID: 118
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -385,7 +385,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: bc300000
       m_LastClickedID: 12476
-      m_ExpandedIDs: 6afbffff
+      m_ExpandedIDs: 56eaffff10f6ffff32f7ffff58f9ffff6afbffff38310000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -445,9 +445,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 365.86765, y: 232.92052, z: -73.55868}
+    m_Target: {x: 374.92438, y: 195.30641, z: -271.3125}
     speed: 2
-    m_Value: {x: 365.86765, y: 232.92052, z: -73.55868}
+    m_Value: {x: 374.92438, y: 195.30641, z: -271.3125}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -480,9 +480,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 540.955
+    m_Target: 396.0498
     speed: 2
-    m_Value: 540.955
+    m_Value: 396.0498
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -573,19 +573,19 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Data
+    - Assets/Scripts
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Data
+  - Assets/Scripts
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\shark_000\Documents\GitHub\Indigo_Sprint3\Ultimate combo
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: ae2f0000
-    m_LastClickedID: 12206
+    m_SelectedIDs: 182e0000
+    m_LastClickedID: 11800
     m_ExpandedIDs: 00000000e22c000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0

@@ -55,11 +55,32 @@ public class Enemy : ScriptableObject
                 i[1] = Random.Range(i[0]+1,list.Count-1);
                 if(!((1 < i[1]-i[0])&&(i[1] - i[0] < 5)))
                 {
-                    Vector2Int tempIndex = new Vector2Int(i[0], i[1]);
+                    string tempIndex = i[0].ToString() + i[1].ToString();
                     w.weaknessSet.Add(tempIndex);
                 }
             }
         }
+    }
+    // fix sometime in the future
+    public List<Weaknesses> ValidateInput(List<Weaknesses> weaknessList, int[] inputCombo)
+    {
+        List<Weaknesses> valid = new List<Weaknesses>();
+        foreach (Weaknesses weakness in weaknessList)
+        {
+            if (inputCombo.Length < weakness.weaknessSet.Count)
+            {
+                // unsure if the condition expression is correctly implemented
+                for (int i = 0; i< (inputCombo.Length - weakness.weaknessSet.Count + 1); i++)
+                {
+                    for (int c = 0; c < weakness.weaknessSet.Count; c++)
+                    {
+                        //????? im lost.
+                        //if (inputCombo[i] == weakness.weaknessSet[c])
+                    }
+                }
+            }
+        }
+        return valid;
     }
     // Start is called before the first frame update
     void Start()
@@ -81,5 +102,5 @@ public class Reactions
 [System.Serializable]
 public class Weaknesses
 {
-    public List<Vector2Int> weaknessSet = new List<Vector2Int>();
+    public List<string> weaknessSet = new List<string>();
 }

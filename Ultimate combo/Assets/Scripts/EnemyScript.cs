@@ -25,7 +25,11 @@ public class EnemyScript : MonoBehaviour
     [SerializeField]
     KeyCode testKey = KeyCode.T;
     [SerializeField]
-    bool test = false, debugging = false;
+    bool test = false, debugging = false, timedTurn = false, useAmmo = false, reuseAttacks = false;
+    [SerializeField]
+    int ammo = 0, startAmmo = 50;
+    [SerializeField, Tooltip("Time in seconds")]
+    float timedTurnLength = 60;
     [Header("Menu")]
     [SerializeField]
     GameObject pauseMenu = null;
@@ -42,6 +46,11 @@ public class EnemyScript : MonoBehaviour
     {
         NewEnemy();
         if (guiManager != null) guiManager.SetPlayerMaxHP(playerHp);
+
+        if (timedTurn)
+        {
+            StartCoroutine("TimedTurn");
+        }
     }
 
     // Update is called once per frame
@@ -65,9 +74,15 @@ public class EnemyScript : MonoBehaviour
             enemyInfo.weaknesses = enemyInfo.NewWeaknesses(weaknessParam.x,weaknessParam.y);
             currentWeaknesses = enemyInfo.weaknesses;
         }
+        if (playerHp <= 0)
+        {
+            PlayerEnd(false);
+        }
     }
     public void NewEnemy()
     {
+        ammo = startAmmo;
+        if (useAmmo) guiManager.SetAmmoText(ammo);
         enemyInfo = new Enemy(Random.Range(0, 5));
         guiManager.SetEnemyInfo(enemyInfo);
         enemyHp = enemyInfo.reactions.Count;
@@ -104,7 +119,7 @@ public class EnemyScript : MonoBehaviour
     }
     public void AddCombo(int type)
     {
-        if (type == prevAttack) return;
+        if (!reuseAttacks && type == prevAttack) return;
         if (!win)
         {
             attackSequence.Add(type);
@@ -136,6 +151,20 @@ public class EnemyScript : MonoBehaviour
     }
     public void TakeDamage()
     {
+        if (timedTurn)
+        {
+            StopCoroutine("TimedTurn");
+        }
+        if (useAmmo)
+        {
+            ammo -= attackSequence.Count;
+            guiManager.SetAmmoText(ammo);
+            if (ammo <= 0)
+            {
+                ammo = 0;
+                PlayerEnd(false);
+            }
+        }
         int failedAttack = CheckSequence() - 1;
         Debug.Log(failedAttack);
         // if the attack got interrupted
@@ -167,12 +196,22 @@ public class EnemyScript : MonoBehaviour
         enemyHp = enemyInfo.reactions.Count - attackSequence.Count;
         Debug.Log("Enemy HP: " + enemyHp);
         guiManager.StartUpdateHealth(enemyHp, playerHp);
+
+        if (timedTurn)
+        {
+            StartCoroutine("TimedTurn");
+        }
     }
     public bool CheckWin()
     {
         bool win = false;
         win = attackSequence.Count >= enemyInfo.reactions.Count;
         return win;
+    }
+    void PlayerEnd(bool win)
+    {
+        if (timedTurn) StopCoroutine("TimedTurn");
+        guiManager.EndGame(win);
     }
     void UpdateAttackSequence()
     {
@@ -214,5 +253,21 @@ public class EnemyScript : MonoBehaviour
     {
         playerHp = 5;
         guiManager.StartUpdateHealth(enemyHp, playerHp);
+    }
+    IEnumerator TimedTurn()
+    {
+        float tempTime = timedTurnLength;
+        while (timedTurn)
+        {
+            guiManager.SetTimedTurn(tempTime);
+            tempTime--;
+            if (tempTime < 1)
+            {
+                playerHp--;
+                guiManager.StartUpdateHealth(enemyHp, playerHp);
+                tempTime = timedTurnLength;
+            }
+            yield return new WaitForSeconds(1);
+        }
     }
 }

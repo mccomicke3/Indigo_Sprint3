@@ -10,13 +10,15 @@ public class GUIManager : MonoBehaviour
     [SerializeField]
     SpriteRenderer spriteRef = null, headRef = null, bodyRef = null, legsRef = null;
     [SerializeField]
-    Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null;
+    Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null, gameOverText = null, timerText = null, ammoText = null;
     [SerializeField]
     Slider enemyHealthBar = null, playerHealthBar = null;
 
     [Header("Menu")]
     [SerializeField]
-    GameObject pauseMenu = null;
+    bool test = false;
+    [SerializeField]
+    GameObject pauseMenu = null, gameOverMenu = null;
     [SerializeField]
     KeyCode pauseKey = KeyCode.Escape;
     Color startColor = Color.white;
@@ -53,10 +55,24 @@ public class GUIManager : MonoBehaviour
         float enemyHp = info.reactions.Count;
         if (enemyHealthBar != null) enemyHealthBar.maxValue = enemyHp;
     }
+    public void SetTimedTurn(float time)
+    {
+        if (timerText == null) return;
+        timerText.text = "Turn: " + GetTimeText(time);
+    }
+    public void SetAmmoText(int ammo)
+    {
+        if (ammoText == null) return;
+        ammoText.text = "Ammo Left: " + ammo;
+    }
     // Scene/Game Control
     public void LoadScene(int sceneIndex)
     {
         SceneManager.LoadScene(sceneIndex);
+    }
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void QuitGame()
     {
@@ -115,5 +131,15 @@ public class GUIManager : MonoBehaviour
     public void UpdateAttackSequenceText(string attackSequence)
     {
         if (attackSequenceText != null) attackSequenceText.text = attackSequence;
+    }
+    public void EndGame(bool win)
+    {
+        if (gameOverMenu == null || gameOverText == null) return;
+        if (!gameOverMenu.activeInHierarchy) ToggleMenu(gameOverMenu);
+        gameOverText.text = (win)? "You Win!" : "Game Over";
+    }
+    string GetTimeText(float time)
+    {
+        return string.Format("{0}:{1:00}", (int)time / 60, (int)time % 60);
     }
 }
