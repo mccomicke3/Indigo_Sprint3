@@ -1,3 +1,6 @@
+import random
+
+
 '''-----------------------------------------------------------------------------
 This algorithm will find the possible lengths of weaknesses which will
 
@@ -77,8 +80,6 @@ entries, then the average case may not be great, so we might want to exclude
 some of these in the final build, but this is the clay we have to work with. 
 
 -----------------------------------------------------------------------------'''
-
-
 
 def brutetest(): #usage Test: 223332 --> either pass or fail 
     userinput = input('Test: ')
@@ -200,11 +201,37 @@ def weaknessgenerator(): # this isnt finished yet but I'll work on it.
     [3, 4, 3],
     [4, 3, 3]]
 
+    choosenlengths = weaknessset[random.randint(0,len(weaknessset)-1)]
+    finalweaknesses = []
+    generatedweakness = ''
+    previousmove = random.randint(0,3)
+
+    for weaknesslen in choosenlengths:
+        generatedweakness = ''
+        generatedweakness = generatedweakness + str(previousmove)
+
+        generatedweakness = uniqueweakness(generatedweakness, finalweaknesses, weaknesslen)
+        previousmove = generatedweakness[-1]
+        finalweaknesses.append(generatedweakness)
+
+    return(finalweaknesses)   
+
+def uniqueweakness(incompleteweakness, finalweaknesses, weaknesslen):
+    for move in range(weaknesslen-1):
+        incompleteweakness = incompleteweakness + str(random.randint(0,3))
+
+    if incompleteweakness in finalweaknesses:
+        print('recursion')
+        incompleteweakness = uniqueweakness(incompleteweakness[0], finalweaknesses, weaknesslen)
+
+    return incompleteweakness
+
+
 
 
 
 #this is a very ineffiecent method of finding all these permutations but I 
 #care not! for it is 3 am and i am very tired. also it works so fuck it.
-
-#findpermutations()
+for test in range (100):
+    print(weaknessgenerator())
 
