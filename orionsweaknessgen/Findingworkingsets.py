@@ -230,8 +230,11 @@ def uniqueweakness(incompleteweakness, finalweaknesses, weaknesslen):
 
 
 
-#this is a very ineffiecent method of finding all these permutations but I 
-#care not! for it is 3 am and i am very tired. also it works so fuck it.
 for test in range (100):
     print(weaknessgenerator())
 
+
+def finalcombo(weaknesslist, userinput):
+    for weakness in weaknesslist:
+        if weakness in userinput: 
+            print(weakness)
