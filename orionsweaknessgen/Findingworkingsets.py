@@ -1,4 +1,70 @@
 import random
+import matplotlib.pyplot as plt
+import numpy as np
+
+weaknessset8 = [[2, 2, 2, 2, 2, 3],
+    [2, 2, 2, 2, 3, 2],
+    [2, 2, 2, 3, 2, 2],
+    [2, 2, 3, 2, 2, 2],
+    [2, 3, 2, 2, 2, 2],
+    [3, 2, 2, 2, 2, 2],
+    [2, 2, 2, 2, 4],
+    [2, 2, 2, 4, 2],
+    [2, 2, 4, 2, 2],
+    [2, 4, 2, 2, 2],
+    [4, 2, 2, 2, 2],
+    [2, 2, 2, 3, 3],
+    [2, 2, 3, 2, 3],
+    [2, 2, 3, 3, 2],
+    [2, 3, 2, 2, 3],
+    [2, 3, 2, 3, 2],
+    [2, 3, 3, 2, 2],
+    [3, 2, 2, 2, 3],
+    [3, 2, 2, 3, 2],
+    [3, 2, 3, 2, 2],
+    [3, 3, 2, 2, 2],
+    [2, 2, 3, 4],
+    [2, 2, 4, 3],
+    [2, 3, 2, 4],
+    [2, 3, 4, 2],
+    [2, 4, 2, 3],
+    [2, 4, 3, 2],
+    [3, 2, 2, 4],
+    [3, 2, 4, 2],
+    [3, 4, 2, 2],
+    [4, 2, 2, 3],
+    [4, 2, 3, 2],
+    [4, 3, 2, 2],
+    [2, 3, 3, 3],
+    [3, 2, 3, 3],
+    [3, 3, 2, 3],
+    [3, 3, 3, 2],
+    [2, 4, 4],
+    [4, 2, 4],
+    [4, 4, 2],
+    [3, 3, 4],
+    [3, 4, 3],
+    [4, 3, 3]]
+
+weaknessset6 = [[2, 2, 2, 2, 2],
+[3, 4],
+[4, 3],
+[3, 3, 2],
+[3, 2, 3],
+[2, 3, 3],
+[2, 2, 4],
+[2, 4, 2],
+[4, 2, 2]]
+
+
+
+
+
+
+
+
+
+
 
 
 '''-----------------------------------------------------------------------------
@@ -81,22 +147,23 @@ some of these in the final build, but this is the clay we have to work with.
 
 -----------------------------------------------------------------------------'''
 
-def brutetest(): #usage Test: 223332 --> either pass or fail 
+def brutetest(targetchar): #usage Test: 223332 --> either pass or fail 
     userinput = input('Test: ')
     while userinput != '': #exit loop with null entry
         charsum = 0
         for char in userinput:
-            charsum += int(char)
+            charsum = charsum + int(char)
         totalchar = len(userinput)
         print(f'{charsum} - {totalchar} -1 = {charsum - (totalchar - 1)}')
-        if charsum - (totalchar - 1)== 8:
+        if charsum - (totalchar - 1)== targetchar:
             print('Pass')
         else:
             print('Fail')
 
         userinput = input('Test: ')
 
-#brutetest()
+#brutetest(6)
+
 def permutation(lst): 
   
     # If lst is empty then there are no permutations 
@@ -131,18 +198,10 @@ Acting under the assumption that this list is indeed exhaustive we can use it to
 produce a randomly generating algorithm which will produce a set of weaknesses
 of lengths according to the sets. 
 -----------------------------------------------------------------------------'''
-def findpermutations():
-    combinationlist =   [[2,2,2,2,2,2,2,],
-                        [2,2,2,2,2,3],
-                        [2,2,2,2,4],
-                        [2,2,2,3,3],
-                        [2,2,3,4],
-                        [2,3,3,3],
-                        [2,4,4],
-                        [3,3,4]]
+def findpermutations(outfilename, combinationlist):
 
     roughlist = []
-    outfile = open('possibleweaknesses.txt','w')
+    outfile = open(outfilename, 'w')
     for combination in combinationlist:
         permutationrough = permutation(combination)
         for permute in permutationrough:
@@ -154,52 +213,27 @@ def findpermutations():
             outfile.write(str(permute)+'\n')
     print (finallist)
     outfile.close()
+#findpermutations('possibleweaknesses.txt','w',)
+combinationlist =   [[2,2,2,2,2],
+                    [3,4],
+                    [3,3,2],
+                    [2,2,4]]
+#findpermutations('possibleweaknesses6.txt', combinationlist)
 
+'''-----------------------------------------------------------------------------
+    combinationlist =   [[2,2,2,2,2,2,2,],
+                        [2,2,2,2,2,3],
+                        [2,2,2,2,4],
+                        [2,2,2,3,3],
+                        [2,2,3,4],
+                        [2,3,3,3],
+                        [2,4,4],
+                        [3,3,4]]
 
-def weaknessgenerator(): # this isnt finished yet but I'll work on it. 
-    weaknessset = [[2, 2, 2, 2, 2, 3],
-    [2, 2, 2, 2, 3, 2],
-    [2, 2, 2, 3, 2, 2],
-    [2, 2, 3, 2, 2, 2],
-    [2, 3, 2, 2, 2, 2],
-    [3, 2, 2, 2, 2, 2],
-    [2, 2, 2, 2, 4],
-    [2, 2, 2, 4, 2],
-    [2, 2, 4, 2, 2],
-    [2, 4, 2, 2, 2],
-    [4, 2, 2, 2, 2],
-    [2, 2, 2, 3, 3],
-    [2, 2, 3, 2, 3],
-    [2, 2, 3, 3, 2],
-    [2, 3, 2, 2, 3],
-    [2, 3, 2, 3, 2],
-    [2, 3, 3, 2, 2],
-    [3, 2, 2, 2, 3],
-    [3, 2, 2, 3, 2],
-    [3, 2, 3, 2, 2],
-    [3, 3, 2, 2, 2],
-    [2, 2, 3, 4],
-    [2, 2, 4, 3],
-    [2, 3, 2, 4],
-    [2, 3, 4, 2],
-    [2, 4, 2, 3],
-    [2, 4, 3, 2],
-    [3, 2, 2, 4],
-    [3, 2, 4, 2],
-    [3, 4, 2, 2],
-    [4, 2, 2, 3],
-    [4, 2, 3, 2],
-    [4, 3, 2, 2],
-    [2, 3, 3, 3],
-    [3, 2, 3, 3],
-    [3, 3, 2, 3],
-    [3, 3, 3, 2],
-    [2, 4, 4],
-    [4, 2, 4],
-    [4, 4, 2],
-    [3, 3, 4],
-    [3, 4, 3],
-    [4, 3, 3]]
+    
+        
+-----------------------------------------------------------------------------'''
+def weaknessgenerator(weaknessset): 
 
     choosenlengths = weaknessset[random.randint(0,len(weaknessset)-1)]
     finalweaknesses = []
@@ -216,25 +250,182 @@ def weaknessgenerator(): # this isnt finished yet but I'll work on it.
 
     return(finalweaknesses)   
 
+
+
 def uniqueweakness(incompleteweakness, finalweaknesses, weaknesslen):
     for move in range(weaknesslen-1):
         incompleteweakness = incompleteweakness + str(random.randint(0,3))
 
     if incompleteweakness in finalweaknesses:
-        print('recursion')
+        #print('recursion')
         incompleteweakness = uniqueweakness(incompleteweakness[0], finalweaknesses, weaknesslen)
 
     return incompleteweakness
 
+def weaknessgeneratortest(n):
+    for test in range (n):
+        print(weaknessgenerator())
 
 
-
-
-for test in range (100):
-    print(weaknessgenerator())
-
-
-def finalcombo(weaknesslist, userinput):
+def foundweakness(foundweaknesses, weaknesslist, userinput):
     for weakness in weaknesslist:
         if weakness in userinput: 
-            print(weakness)
+            if weakness not in foundweaknesses: 
+                foundweaknesses.append(weakness)
+    return foundweaknesses
+
+
+#print(finalcombo(['21', '112', '203', '33', '31'],'21120331'))
+def finalcombo(weaknesslist, userinput):
+    
+    for weakness in weaknesslist:
+        if weakness not in userinput:
+            return False
+    return True
+        
+
+
+
+
+
+
+# a simple little test function to get a feel for
+#how a game might play on a personal level. 
+
+def testgame(): 
+    weaknesslist = weaknessgenerator()
+    turntimer = 0
+    foundweaknesses = []
+
+    while True:
+        #print(weaknesslist)
+        for weakness in weaknesslist:
+            print(len(weakness), end=' ')
+        turntimer += 1
+        print(f'Turn: {turntimer}\nFound Weaknesses: {foundweaknesses}')
+        userinput = input('Input moves: ')
+        if finalcombo(weaknesslist, userinput) == True: 
+            break
+        
+        foundweaknesses = foundweakness(foundweaknesses, weaknesslist, userinput)
+    print('You Win, Combo Complete')
+
+#testgame()
+
+
+
+#the idea for this function is to quantitatively test the difficulty 
+#of the game by randomly entering values and seeing how many turns
+#it would take on average to resolve a game. 
+
+
+def difficultytest(weaknessset, lenfullcombo):
+    turnsuntilwin = []
+
+
+    for combination in weaknessset:
+        combinationtrialturns = []
+        for test in range (30):
+            trialsuccess = False
+            trialturns = 0
+            trialweaknesses = weaknessgenerator()
+            while trialsuccess == False:
+                trialturns += 1
+                userimput = ''
+
+                for digit in range (lenfullcombo):
+                    userimput = userimput + str(random.randint(0,3))
+
+                if finalcombo(trialweaknesses, userimput):
+                    trialsuccess = True
+                if trialturns > 1000:
+                    trialsuccess = True
+                    print('exceeded 1000 trials')
+
+            combinationtrialturns.append(trialturns)
+        turnsuntilwin.append(combinationtrialturns)
+    
+    print(turnsuntilwin)
+    finaldata = []
+    for dataset in turnsuntilwin:
+        finaldata.append(sum(dataset)/len(dataset))
+    finaldataarray = np.array(finaldata)
+    x = np.arange(0, len(weaknessset))
+    plt.bar(x, finaldataarray)
+    plt.show()
+    #holy fucking shit these odds are terrible. 
+    #it may actually be 1 in 4^8 on average. 
+    #we may have to scrap this approach entirely
+    # I mean i dont know, the person will have
+    #more information than that, they'll know the 
+    #length of the combos and that one will always
+    #lead into the next. 
+
+#difficultytest(weaknessset6)
+
+def equallists(list1, list2):
+    for item in list1:
+        if item not in list2:
+            return False
+    for item2 in list2:
+        if item2 not in list1:
+            return False
+    return True
+
+#alright this algorithm just measures success as having
+#found all of the combo peices, but I feel like
+#this may still be low balling the number of 
+#turns. idfk its fucking late dude. 
+
+def weaknessfindtest(weaknessset, lenfullcombo):
+    turnsuntilwin = []
+
+    for combination in weaknessset:
+        combinationtrialturns = []
+        for test in range (300):
+            trialsuccess = False
+            trialturns = 0
+            trialweaknesses = weaknessgenerator(weaknessset)
+            trialfoundweaknesses = []
+            while trialsuccess == False:
+                trialturns += 1
+                userimput = ''
+                
+                for digit in range (lenfullcombo):
+                    userimput = userimput + str(random.randint(0,3))
+
+                trialfoundweaknesses = foundweakness( trialfoundweaknesses, trialweaknesses, userimput)
+                print(userimput)
+                if equallists(trialfoundweaknesses, trialweaknesses):
+                    trialsuccess = True
+
+                if trialturns > 1000:
+                    trialsuccess = True
+                    print('exceeded 1000 trials')
+
+            combinationtrialturns.append(trialturns)
+        turnsuntilwin.append(combinationtrialturns)
+    
+    print(turnsuntilwin)
+    finaldata = []
+    for dataset in turnsuntilwin:
+        finaldata.append(sum(dataset)/len(dataset))
+    finaldataarray = np.array(finaldata)
+    x = np.arange(0, len(weaknessset))
+    plt.bar(x, finaldataarray)
+    plt.title(f'Number of average trials needed to find all weaknesses '
+              f'length of combo: {lenfullcombo}')
+    plt.show()
+
+#alright this is looking a lot less bad, doable even. 
+#still seems pretty boring to input the same thing 30 times
+#on average
+#weaknessfindtest(weaknessset6, 6)
+
+
+
+
+
+
+
+
