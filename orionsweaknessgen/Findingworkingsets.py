@@ -220,21 +220,8 @@ combinationlist =   [[2,2,2,2,2],
                     [2,2,4]]
 #findpermutations('possibleweaknesses6.txt', combinationlist)
 
-'''-----------------------------------------------------------------------------
-    combinationlist =   [[2,2,2,2,2,2,2,],
-                        [2,2,2,2,2,3],
-                        [2,2,2,2,4],
-                        [2,2,2,3,3],
-                        [2,2,3,4],
-                        [2,3,3,3],
-                        [2,4,4],
-                        [3,3,4]]
-
-    
-        
------------------------------------------------------------------------------'''
 def weaknessgenerator(weaknessset): 
-
+#  [2, 2, 2, 4, 2]
     choosenlengths = weaknessset[random.randint(0,len(weaknessset)-1)]
     finalweaknesses = []
     generatedweakness = ''
@@ -248,7 +235,7 @@ def weaknessgenerator(weaknessset):
         previousmove = generatedweakness[-1]
         finalweaknesses.append(generatedweakness)
 
-    return(finalweaknesses)   
+    return(finalweaknesses)
 
 
 
