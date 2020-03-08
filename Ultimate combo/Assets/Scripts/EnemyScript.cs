@@ -16,11 +16,14 @@ public class EnemyScript : MonoBehaviour
     Vector2Int weaknessParam = new Vector2Int();
     [SerializeField]
     List<Weaknesses> currentWeaknesses = new List<Weaknesses>();
+    //list of weaknesses
     [SerializeField]
     List<Sprite> headList = new List<Sprite>(), bodyList = new List<Sprite>(), legsList = new List<Sprite>();
 
     int prevAttack = -1;
     public List<int> attackSequence = new List<int>();
+    //holds the number of moves that a user enters each turn
+
     [Header("Test")]
     [SerializeField]
     KeyCode testKey = KeyCode.T;
@@ -102,6 +105,7 @@ public class EnemyScript : MonoBehaviour
         guiManager.StartUpdateHealth(enemyHp, playerHp);
         RandomizeEnemyParts();
     }
+
     public void RandomizeEnemyParts()
     {
         if (headList.Count > 1)
@@ -117,6 +121,14 @@ public class EnemyScript : MonoBehaviour
             guiManager.EnemyBodySprite(GUIManager.BodyPart.Legs, legsList[Random.Range(0, legsList.Count)]);
         }
     }
+
+
+    /*
+     * Takes integer representing the move that a user inputs and adds it to
+     * the list attackSequence
+     * returns void
+     */
+
     public void AddCombo(int type)
     {
         if (!reuseAttacks && type == prevAttack) return;
@@ -127,12 +139,16 @@ public class EnemyScript : MonoBehaviour
         UpdateAttackSequence();
         prevAttack = type;
     }
+    /* 
+     *
+     */
     public void ClearSequence()
     {
         attackSequence.Clear();
         UpdateAttackSequence();
         prevAttack = -1;
     }
+
     public int CheckSequence()
     {
         int interrupted = -1;
@@ -208,14 +224,20 @@ public class EnemyScript : MonoBehaviour
         win = attackSequence.Count >= enemyInfo.reactions.Count;
         return win;
     }
+
     void PlayerEnd(bool win)
     {
         if (timedTurn) StopCoroutine("TimedTurn");
         guiManager.EndGame(win);
     }
+
+    /* Updates the text which appears at the top of the screen representing
+     * The sequence of moves which a player enters each turn.
+     * returns void
+     */
     void UpdateAttackSequence()
     {
-        string tempText = "Attacks: ";
+        string tempText = "Attacks: "; //holds the current moves entered
         for (int i = 0; i < attackSequence.Count; i++)
         {
             if (i > 0)
@@ -249,11 +271,17 @@ public class EnemyScript : MonoBehaviour
         }
         guiManager.UpdateAttackSequenceText(tempText);
     }
+
     void RestorePlayerHealth()
     {
         playerHp = 5;
         guiManager.StartUpdateHealth(enemyHp, playerHp);
     }
+
+
+    /* Declares a coroutine for 
+     */
+
     IEnumerator TimedTurn()
     {
         float tempTime = timedTurnLength;

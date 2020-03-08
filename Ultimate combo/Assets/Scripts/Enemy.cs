@@ -13,12 +13,14 @@ public class Enemy : ScriptableObject
     public List<Weaknesses> weaknesses;
     public Sprite enemyImage = null, enemyHead = null, enemyBody = null, enemyLegs = null;
     public int[,] testReactions;
-    public Enemy(int level = 0)
+    public Enemy(int level = 0) //class constructor
     {
         enemyName = nameList[Random.Range(0,nameList.Length)];
         int reactionAmount = 4 + (level);
         reactions = NewReactions(reactionAmount);
     }
+
+
     public List<Reactions> NewReactions(int length)
     {
         List<Reactions> newReactions = new List<Reactions>();
@@ -33,6 +35,8 @@ public class Enemy : ScriptableObject
         }
         return newReactions;
     }
+
+
     public List<Weaknesses> NewWeaknesses(int comboLength, int weaknessNum)
     {
         List<Weaknesses> weaknessList = new List<Weaknesses>();
@@ -44,6 +48,8 @@ public class Enemy : ScriptableObject
         SplitWeaknessList(weaknessList, weaknessNum);
         return weaknessList;
     }
+
+
     public void SplitWeaknessList(List<Weaknesses> list, int weaknesses)
     {
         foreach(Weaknesses w in list)
@@ -62,6 +68,7 @@ public class Enemy : ScriptableObject
         }
     }
     // fix sometime in the future
+
     public List<Weaknesses> ValidateInput(List<Weaknesses> weaknessList, int[] inputCombo)
     {
         List<Weaknesses> valid = new List<Weaknesses>();
@@ -99,6 +106,7 @@ public class Reactions
 {
     public List<int> reactionSet = new List<int>();
 }
+
 [System.Serializable]
 public class Weaknesses
 {
