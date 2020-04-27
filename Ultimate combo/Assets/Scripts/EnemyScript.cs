@@ -7,15 +7,20 @@ public class EnemyScript : MonoBehaviour
 {
     [SerializeField]
     GUIManager guiManager = null;
+
     [SerializeField]
     Enemy enemyInfo = null;
+
     [SerializeField]
     List<Reactions> currentEnemyReactions = new List<Reactions>();
     [Tooltip("x is combo length, y is number of weaknesses")]
+
     [SerializeField]
     Vector2Int weaknessParam = new Vector2Int();
+
     [SerializeField]
     List<Weaknesses> currentWeaknesses = new List<Weaknesses>();
+
     //list of weaknesses
     [SerializeField]
     List<Sprite> headList = new List<Sprite>(), bodyList = new List<Sprite>(), legsList = new List<Sprite>();
@@ -82,6 +87,9 @@ public class EnemyScript : MonoBehaviour
             PlayerEnd(false);
         }
     }
+
+    //Generates a New enemy object
+
     public void NewEnemy()
     {
         ammo = startAmmo;
@@ -89,7 +97,7 @@ public class EnemyScript : MonoBehaviour
         enemyInfo = new Enemy(Random.Range(0, 5));
         guiManager.SetEnemyInfo(enemyInfo);
         enemyHp = enemyInfo.reactions.Count;
-        if (debugging)
+        if (debugging) // if debugging, display the reaction counts in the debug log
         {
             for (int i = 0; i < enemyInfo.reactions.Count; i++)
             {
