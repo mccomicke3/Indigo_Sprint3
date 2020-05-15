@@ -19,20 +19,15 @@ using UnityEngine;
 -------------------------------------------------------------------------*/
 public class Enemy : ScriptableObject
 {
-    public int enemyHp = 100; 
-    public static string[] maleNames = { "Tom", "Geoff", "Jack", "Jeremy", "Trevor", "Ryan", "Bob", "Billy", "Kevin", "Jeff", "Steve", "Andrew", "Vincent", "Eric", "Brock", "Brocc", "Ash" },
-        femaleNames = { "Sarah", "Cindy", "Katie", "Lisa", "Ashley" };
-    public string[] nameList = maleNames;
+    public int enemyHp = 100;
+    public string[] nameList = { "Tom", "Geoff", "Jack", "Jeremy", "Trevor", "Ryan", "Bob", "Billy", "Kevin", "Jeff", "Steve", "Andrew", "Vincent", "Eric", "Brock", "Brocc", "Ash" };
     public string enemyName = "Brocc";
     public List<string> weaknesses = null;
     public Sprite enemyImage = null, enemyHead = null, enemyBody = null, enemyLegs = null;
 
     public Enemy() //class constructor
     {
-        enemyName = nameList[Random.Range(0, nameList.Length)];
-        if (weaknesses == null){
-            weaknesses = WeaknessGenerator();
-        }
+
     }
 
 
@@ -40,7 +35,7 @@ public class Enemy : ScriptableObject
  * Weakness generator
  * The purpose of this method, is to produce a list of strings which represent
  * the weaknesses an Enemy has, this list of strings follows these criteria
- *  - consist of w moves between (2, 4)
+ *  - consist of n moves between (2, 4)
     - there are 4 possible moves and in this code will be represented by integers
       0, 1, 2, 3
     - each concequtive weakness begins with the last entry of the first weakness
@@ -200,7 +195,13 @@ public class Enemy : ScriptableObject
 
 
 
+    public void Randomize()
+    {
+        enemyName = nameList[Random.Range(0, nameList.Length)];
+        weaknesses = WeaknessGenerator();
 
+
+    }
 
     public bool IsFinalCombo()
         {

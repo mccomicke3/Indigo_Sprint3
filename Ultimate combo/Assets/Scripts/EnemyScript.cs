@@ -57,8 +57,7 @@ public class EnemyScript : MonoBehaviour
     [SerializeField]
     KeyCode pauseKey = KeyCode.Escape;
 
-    float testDelay = 0, winDelay = 0, colorDelay = 0;
-    Color startColor;
+    float testDelay = 0, winDelay = 0;
     bool win = false;
     float playerHp = 5, enemyHp = 0;
 
@@ -105,13 +104,15 @@ public class EnemyScript : MonoBehaviour
 
     public void NewEnemy()
     {
-        enemyInfo = new Enemy();
+        enemyInfo = ScriptableObject.CreateInstance<Enemy>();
+        enemyInfo.Randomize();
         guiManager.SetEnemyInfo(enemyInfo);
-        enemyHp = 100;
         currentWeaknesses = enemyInfo.weaknesses;
         RestorePlayerHealth();
         guiManager.StartUpdateHealth(enemyHp, playerHp);
         RandomizeEnemyParts();
+        knownWeaknesses = enemyInfo.weaknesses;
+
     }
 
     public void RandomizeEnemyParts()
