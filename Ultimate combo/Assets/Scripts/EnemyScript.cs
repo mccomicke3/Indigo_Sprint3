@@ -7,18 +7,16 @@ using UnityEngine.UI;
  * EnemyScript
  * script to control the behaviour of the current active enemy, and will
  * use the gui manager to update the various gui elements.
- * To be attached to:
+ * To be attached to: The first enemy in the scene
  * Responsible for:
  * 
- * instantiating new enemy entities
+ * reseting the enemy data when you need new enemy entities
  * keeping track of the known combos
  * handling the main gameplay loop
  * keeping track of player HP
  * keeping track of entered moves
  * dealing damage to the enemy
  * 
- * 
- *
  * Will call the GUI manager to update the GUI when nescessary
  * 
 -------------------------------------------------------------------------*/
@@ -32,31 +30,30 @@ public class EnemyScript : MonoBehaviour
     Enemy enemyInfo = null;
 
     [SerializeField]
-    Vector2Int weaknessParam = new Vector2Int();
-
-    [SerializeField]
     List<string> currentWeaknesses = new List<string>();
 
-    //list of weaknesses
     [SerializeField]
     List<Sprite> headList = new List<Sprite>(), bodyList = new List<Sprite>(), legsList = new List<Sprite>();
 
     int prevAttack = -1;
     public List<int> attackSequence = new List<int>();
+    public List<string> knownWeaknesses = new List<string>();
     //holds the number of moves that a user enters each turn
 
     [Header("Test")]
     [SerializeField]
     KeyCode testKey = KeyCode.T;
+
     [SerializeField]
     bool test = false, debugging = false, timedTurn = false, useAmmo = false, reuseAttacks = false;
-    [SerializeField]
-    int ammo = 0, startAmmo = 50;
+
     [SerializeField, Tooltip("Time in seconds")]
     float timedTurnLength = 60;
+
     [Header("Menu")]
     [SerializeField]
     GameObject pauseMenu = null;
+
     [SerializeField]
     KeyCode pauseKey = KeyCode.Escape;
 
@@ -95,7 +92,7 @@ public class EnemyScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             Debug.Log("weak!");
-            enemyInfo.weaknesses = enemyInfo.NewWeaknesses(weaknessParam.x,weaknessParam.y);
+            enemyInfo.weaknesses = enemyInfo.WeaknessGenerator();
             currentWeaknesses = enemyInfo.weaknesses;
         }
         if (playerHp <= 0)
@@ -110,8 +107,7 @@ public class EnemyScript : MonoBehaviour
     {
         enemyInfo = new Enemy();
         guiManager.SetEnemyInfo(enemyInfo);
-        enemyHp = enemyInfo.reactions.Count;
-        currentEnemyReactions = enemyInfo.reactions;
+        enemyHp = 100;
         currentWeaknesses = enemyInfo.weaknesses;
         RestorePlayerHealth();
         guiManager.StartUpdateHealth(enemyHp, playerHp);
@@ -160,7 +156,7 @@ public class EnemyScript : MonoBehaviour
         UpdateAttackSequence();
         prevAttack = -1;
     }
-
+    /*
     public int CheckSequence()
     {
         int interrupted = -1;
@@ -177,22 +173,19 @@ public class EnemyScript : MonoBehaviour
         }
         return interrupted;
     }
+    */
     public void TakeDamage()
+    { 
+    /*
+     * will have to determine if the player will take damage?
+     * 
+     * 
     {
         if (timedTurn)
         {
             StopCoroutine("TimedTurn");
         }
-        if (useAmmo)
-        {
-            ammo -= attackSequence.Count;
-            guiManager.SetAmmoText(ammo);
-            if (ammo <= 0)
-            {
-                ammo = 0;
-                PlayerEnd(false);
-            }
-        }
+
         int failedAttack = CheckSequence() - 1;
         Debug.Log(failedAttack);
         // if the attack got interrupted
@@ -229,12 +222,15 @@ public class EnemyScript : MonoBehaviour
         {
             StartCoroutine("TimedTurn");
         }
-    }
+    
+    */}
+
     public bool CheckWin()
     {
-        bool win = false;
-        win = attackSequence.Count >= enemyInfo.reactions.Count;
-        return win;
+        if (enemyInfo.enemyHp <= 0) {
+            return true;
+        }
+        return false;
     }
 
     void PlayerEnd(bool win)
@@ -291,7 +287,7 @@ public class EnemyScript : MonoBehaviour
     }
 
 
-    /* Declares a coroutine for 
+    /* Declares a coroutine to keep track of the limited time between turns 
      */
 
     IEnumerator TimedTurn()

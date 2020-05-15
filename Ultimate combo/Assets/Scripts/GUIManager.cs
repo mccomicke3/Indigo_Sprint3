@@ -4,6 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/*-------------------------------------------------------------------------
+ * GUIManager
+ * Script to make updating the visual elements of the game easier
+ * also makes some simple functions for loading scenes and quitting the game'
+ * To be attached to: The EnemyScript Script
+ * Responsible for:
+ * 
+ * handling pause menu
+ * updating ui objects
+ * loading/reloading/quiting the current scene
+ * 
+ *
+ * 
+-------------------------------------------------------------------------*/
+
 public class GUIManager : MonoBehaviour
 {
     public enum BodyPart { Head, Body, Legs }
@@ -51,8 +66,8 @@ public class GUIManager : MonoBehaviour
     public void SetEnemyInfo(Enemy info)
     {
         if (enemyNameText != null) enemyNameText.text = info.enemyName;
-        if (enemyHealthText != null) enemyHealthText.text = "HP: " + info.reactions.Count;
-        float enemyHp = info.reactions.Count;
+        if (enemyHealthText != null) enemyHealthText.text = "HP: " + info.enemyHp;
+        float enemyHp = info.enemyHp;
         if (enemyHealthBar != null) enemyHealthBar.maxValue = enemyHp;
     }
     public void SetTimedTurn(float time)

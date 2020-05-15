@@ -24,13 +24,15 @@ public class Enemy : ScriptableObject
         femaleNames = { "Sarah", "Cindy", "Katie", "Lisa", "Ashley" };
     public string[] nameList = maleNames;
     public string enemyName = "Brocc";
-    public List<string> weaknesses;
+    public List<string> weaknesses = null;
     public Sprite enemyImage = null, enemyHead = null, enemyBody = null, enemyLegs = null;
 
     public Enemy() //class constructor
     {
         enemyName = nameList[Random.Range(0, nameList.Length)];
-        weaknesses = WeaknessGenerator();
+        if (weaknesses == null){
+            weaknesses = WeaknessGenerator();
+        }
     }
 
 
