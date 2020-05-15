@@ -24,28 +24,28 @@ using UnityEngine.UI;
 public class EnemyScript : MonoBehaviour
 {
     [SerializeField]
-    GUIManager guiManager = null;
+    GUIManager guiManager = null; //This is the GUI script
 
     [SerializeField]
-    Enemy enemyInfo = null;
+    Enemy enemyInfo = null; //Holds the information about the current enemy
 
     [SerializeField]
-    List<string> currentWeaknesses = new List<string>();
+    List<string> currentWeaknesses = new List<string>(); //The current list of weaknesses
 
     [SerializeField]
     List<Sprite> headList = new List<Sprite>(), bodyList = new List<Sprite>(), legsList = new List<Sprite>();
 
-    int prevAttack = -1;
+    int prevAttack = -1; //indicates the most recent move input by the user -1 is none
     public List<int> attackSequence = new List<int>();
     public List<string> knownWeaknesses = new List<string>();
     //holds the number of moves that a user enters each turn
 
     [Header("Test")]
-    [SerializeField]
+    [SerializeField] //testing tool used for testing some features
     KeyCode testKey = KeyCode.T;
 
     [SerializeField]
-    bool test = false, debugging = false, timedTurn = false, useAmmo = false, reuseAttacks = false;
+    bool test = false, debugging = false, timedTurn = true;
 
     [SerializeField, Tooltip("Time in seconds")]
     float timedTurnLength = 60;
@@ -139,7 +139,6 @@ public class EnemyScript : MonoBehaviour
 
     public void AddCombo(int type)
     {
-        if (!reuseAttacks && type == prevAttack) return;
         if (!win)
         {
             attackSequence.Add(type);
