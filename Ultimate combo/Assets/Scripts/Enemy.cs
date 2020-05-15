@@ -3,21 +3,57 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu()]
+
+/*-------------------------------------------------------------------------
+ * Enemy Class
+ * Holds some information about the enemy entity, including:
+ * a name string
+ * a list of the combos which the enemy is weak to
+ * sprites which represent the enemy
+ * an integer representing its HP
+ * 
+ * Also has several methods,
+ * IsFinalCombo(Input list) checks the win state. 
+ * WeaknessGenerator() will generate a new random list of weaknesses
+ * 
+-------------------------------------------------------------------------*/
 public class Enemy : ScriptableObject
 {
+    public int enemyHp = 100; 
     public static string[] maleNames = { "Tom", "Geoff", "Jack", "Jeremy", "Trevor", "Ryan", "Bob", "Billy", "Kevin", "Jeff", "Steve", "Andrew", "Vincent", "Eric", "Brock", "Brocc", "Ash" },
         femaleNames = { "Sarah", "Cindy", "Katie", "Lisa", "Ashley" };
     public string[] nameList = maleNames;
     public string enemyName = "Brocc";
     public List<string> weaknesses;
     public Sprite enemyImage = null, enemyHead = null, enemyBody = null, enemyLegs = null;
+
     public Enemy() //class constructor
     {
         enemyName = nameList[Random.Range(0, nameList.Length)];
-        weaknesses = weaknessGenerator();
+        weaknesses = WeaknessGenerator();
     }
 
-    public List<string> weaknessGenerator()
+
+    /*-------------------------------------------------------------------------
+ * Weakness generator
+ * The purpose of this method, is to produce a list of strings which represent
+ * the weaknesses an Enemy has, this list of strings follows these criteria
+ *  - consist of w moves between (2, 4)
+    - there are 4 possible moves and in this code will be represented by integers
+      0, 1, 2, 3
+    - each concequtive weakness begins with the last entry of the first weakness
+    - each weakness must be unique
+    - each combo must meld together and fit into the ultimate combo in 8 moves.
+    concequentially there are a finite number of combonations which may exist,
+    
+    the list weaknessSet is the list of viable lengths of the weaknesses which
+    may exist, the algorithm procedurally builds the combos by picking the last
+    move of each combo to be the first move of the next, retrying if it is not
+    unique.
+ * 
+-------------------------------------------------------------------------*/
+
+    public List<string> WeaknessGenerator()
     {//first choose a group of weaknesses from the list of viable ones
         string[] weaknessSet =
             {"222223" ,
@@ -137,28 +173,42 @@ public class Enemy : ScriptableObject
 
     }
 
-     /*
-    public List<Weaknesses> ValidateInput(List<Weaknesses> weaknessList, int[] inputCombo)
-    {
-        List<Weaknesses> valid = new List<Weaknesses>();
-        foreach (Weaknesses weakness in weaknessList)
+    /*
+   public List<Weaknesses> ValidateInput(List<Weaknesses> weaknessList, int[] inputCombo)
+   {
+       List<Weaknesses> valid = new List<Weaknesses>();
+       foreach (Weaknesses weakness in weaknessList)
+       {
+           if (inputCombo.Length < weakness.weaknessSet.Count)
+           {
+               // unsure if the condition expression is correctly implemented
+               for (int i = 0; i< (inputCombo.Length - weakness.weaknessSet.Count + 1); i++)
+               {
+                   for (int c = 0; c < weakness.weaknessSet.Count; c++)
+                   {
+                       //????? im lost.
+                       //if (inputCombo[i] == weakness.weaknessSet[c])
+                   }
+               }
+           }
+       }
+       return valid;
+   }
+   */
+
+
+
+
+
+    public bool IsFinalCombo()
         {
-            if (inputCombo.Length < weakness.weaknessSet.Count)
-            {
-                // unsure if the condition expression is correctly implemented
-                for (int i = 0; i< (inputCombo.Length - weakness.weaknessSet.Count + 1); i++)
-                {
-                    for (int c = 0; c < weakness.weaknessSet.Count; c++)
-                    {
-                        //????? im lost.
-                        //if (inputCombo[i] == weakness.weaknessSet[c])
-                    }
-                }
-            }
-        }
-        return valid;
+        return true;
     }
-    */
+
+
+
+
+
     // Start is called before the first frame update
     void Start()
     {

@@ -3,6 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*-------------------------------------------------------------------------
+ * EnemyScript
+ * script to control the behaviour of the current active enemy, and will
+ * use the gui manager to update the various gui elements.
+ * To be attached to:
+ * Responsible for:
+ * 
+ * instantiating new enemy entities
+ * keeping track of the known combos
+ * handling the main gameplay loop
+ * keeping track of player HP
+ * keeping track of entered moves
+ * dealing damage to the enemy
+ * 
+ * 
+ *
+ * Will call the GUI manager to update the GUI when nescessary
+ * 
+-------------------------------------------------------------------------*/
+
 public class EnemyScript : MonoBehaviour
 {
     [SerializeField]
@@ -12,14 +32,10 @@ public class EnemyScript : MonoBehaviour
     Enemy enemyInfo = null;
 
     [SerializeField]
-    List<Reactions> currentEnemyReactions = new List<Reactions>();
-    [Tooltip("x is combo length, y is number of weaknesses")]
-
-    [SerializeField]
     Vector2Int weaknessParam = new Vector2Int();
 
     [SerializeField]
-    List<Weaknesses> currentWeaknesses = new List<Weaknesses>();
+    List<string> currentWeaknesses = new List<string>();
 
     //list of weaknesses
     [SerializeField]
@@ -92,21 +108,9 @@ public class EnemyScript : MonoBehaviour
 
     public void NewEnemy()
     {
-        ammo = startAmmo;
-        if (useAmmo) guiManager.SetAmmoText(ammo);
-        enemyInfo = new Enemy(Random.Range(0, 5));
+        enemyInfo = new Enemy();
         guiManager.SetEnemyInfo(enemyInfo);
         enemyHp = enemyInfo.reactions.Count;
-        if (debugging) // if debugging, display the reaction counts in the debug log
-        {
-            for (int i = 0; i < enemyInfo.reactions.Count; i++)
-            {
-                for (int c = 0; c < enemyInfo.reactions[i].reactionSet.Count; c++)
-                {
-                    Debug.Log(enemyInfo.enemyName + " " + i + "-" + c + ":" + enemyInfo.reactions[i].reactionSet[c]);
-                }
-            }
-        }
         currentEnemyReactions = enemyInfo.reactions;
         currentWeaknesses = enemyInfo.weaknesses;
         RestorePlayerHealth();
