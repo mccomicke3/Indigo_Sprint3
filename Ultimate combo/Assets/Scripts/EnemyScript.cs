@@ -3,44 +3,61 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*-------------------------------------------------------------------------
+ * EnemyScript
+ * script to control the behaviour of the current active enemy, and will
+ * use the gui manager to update the various gui elements.
+ * To be attached to: The first enemy in the scene
+ * Responsible for:
+ * 
+ * reseting the enemy data when you need new enemy entities
+ * keeping track of the known combos
+ * handling the main gameplay loop
+ * keeping track of player HP
+ * keeping track of entered moves
+ * dealing damage to the enemy
+ * 
+ * Will call the GUI manager to update the GUI when nescessary
+ * 
+-------------------------------------------------------------------------*/
+
 public class EnemyScript : MonoBehaviour
 {
     [SerializeField]
-    GUIManager guiManager = null;
+    GUIManager guiManager = null; //This is the GUI script
+
     [SerializeField]
-    Enemy enemyInfo = null;
+    Enemy enemyInfo = null; //Holds the information about the current enemy
+
     [SerializeField]
-    List<Reactions> currentEnemyReactions = new List<Reactions>();
-    [Tooltip("x is combo length, y is number of weaknesses")]
-    [SerializeField]
-    Vector2Int weaknessParam = new Vector2Int();
-    [SerializeField]
-    List<Weaknesses> currentWeaknesses = new List<Weaknesses>();
-    //list of weaknesses
+    List<string> currentWeaknesses = new List<string>(); //The current list of weaknesses
+
     [SerializeField]
     List<Sprite> headList = new List<Sprite>(), bodyList = new List<Sprite>(), legsList = new List<Sprite>();
 
-    int prevAttack = -1;
+    int prevAttack = -1; //indicates the most recent move input by the user -1 is none
     public List<int> attackSequence = new List<int>();
+    public List<string> knownWeaknesses = new List<string>();
     //holds the number of moves that a user enters each turn
 
     [Header("Test")]
-    [SerializeField]
+    [SerializeField] //testing tool used for testing some features
     KeyCode testKey = KeyCode.T;
+
     [SerializeField]
-    bool test = false, debugging = false, timedTurn = false, useAmmo = false, reuseAttacks = false;
-    [SerializeField]
-    int ammo = 0, startAmmo = 50;
+    bool test = false, debugging = false, timedTurn = true;
+
     [SerializeField, Tooltip("Time in seconds")]
     float timedTurnLength = 60;
+
     [Header("Menu")]
     [SerializeField]
     GameObject pauseMenu = null;
+
     [SerializeField]
     KeyCode pauseKey = KeyCode.Escape;
 
-    float testDelay = 0, winDelay = 0, colorDelay = 0;
-    Color startColor;
+    float testDelay = 0, winDelay = 0;
     bool win = false;
     float playerHp = 5, enemyHp = 0;
 
@@ -74,7 +91,7 @@ public class EnemyScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             Debug.Log("weak!");
-            enemyInfo.weaknesses = enemyInfo.NewWeaknesses(weaknessParam.x,weaknessParam.y);
+            enemyInfo.weaknesses = enemyInfo.WeaknessGenerator();
             currentWeaknesses = enemyInfo.weaknesses;
         }
         if (playerHp <= 0)
@@ -82,28 +99,20 @@ public class EnemyScript : MonoBehaviour
             PlayerEnd(false);
         }
     }
+
+    //Generates a New enemy object
+
     public void NewEnemy()
     {
-        ammo = startAmmo;
-        if (useAmmo) guiManager.SetAmmoText(ammo);
-        enemyInfo = new Enemy(Random.Range(0, 5));
+        enemyInfo = ScriptableObject.CreateInstance<Enemy>();
+        enemyInfo.Randomize();
         guiManager.SetEnemyInfo(enemyInfo);
-        enemyHp = enemyInfo.reactions.Count;
-        if (debugging)
-        {
-            for (int i = 0; i < enemyInfo.reactions.Count; i++)
-            {
-                for (int c = 0; c < enemyInfo.reactions[i].reactionSet.Count; c++)
-                {
-                    Debug.Log(enemyInfo.enemyName + " " + i + "-" + c + ":" + enemyInfo.reactions[i].reactionSet[c]);
-                }
-            }
-        }
-        currentEnemyReactions = enemyInfo.reactions;
         currentWeaknesses = enemyInfo.weaknesses;
         RestorePlayerHealth();
         guiManager.StartUpdateHealth(enemyHp, playerHp);
         RandomizeEnemyParts();
+        knownWeaknesses = enemyInfo.weaknesses;
+
     }
 
     public void RandomizeEnemyParts()
@@ -131,7 +140,6 @@ public class EnemyScript : MonoBehaviour
 
     public void AddCombo(int type)
     {
-        if (!reuseAttacks && type == prevAttack) return;
         if (!win)
         {
             attackSequence.Add(type);
@@ -148,7 +156,7 @@ public class EnemyScript : MonoBehaviour
         UpdateAttackSequence();
         prevAttack = -1;
     }
-
+    /*
     public int CheckSequence()
     {
         int interrupted = -1;
@@ -165,22 +173,19 @@ public class EnemyScript : MonoBehaviour
         }
         return interrupted;
     }
+    */
     public void TakeDamage()
+    { 
+    /*
+     * will have to determine if the player will take damage?
+     * 
+     * 
     {
         if (timedTurn)
         {
             StopCoroutine("TimedTurn");
         }
-        if (useAmmo)
-        {
-            ammo -= attackSequence.Count;
-            guiManager.SetAmmoText(ammo);
-            if (ammo <= 0)
-            {
-                ammo = 0;
-                PlayerEnd(false);
-            }
-        }
+
         int failedAttack = CheckSequence() - 1;
         Debug.Log(failedAttack);
         // if the attack got interrupted
@@ -217,12 +222,15 @@ public class EnemyScript : MonoBehaviour
         {
             StartCoroutine("TimedTurn");
         }
-    }
+    
+    */}
+
     public bool CheckWin()
     {
-        bool win = false;
-        win = attackSequence.Count >= enemyInfo.reactions.Count;
-        return win;
+        if (enemyInfo.enemyHp <= 0) {
+            return true;
+        }
+        return false;
     }
 
     void PlayerEnd(bool win)
@@ -279,7 +287,7 @@ public class EnemyScript : MonoBehaviour
     }
 
 
-    /* Declares a coroutine for 
+    /* Declares a coroutine to keep track of the limited time between turns 
      */
 
     IEnumerator TimedTurn()

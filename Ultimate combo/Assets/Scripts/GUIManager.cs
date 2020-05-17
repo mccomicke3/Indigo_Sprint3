@@ -4,13 +4,30 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/*-------------------------------------------------------------------------
+ * GUIManager
+ * Script to make updating the visual elements of the game easier
+ * also makes some simple functions for loading scenes and quitting the game'
+ * To be attached to: 
+ *      The EnemyScript Script
+ *      The EventSystem Script
+ * Responsible for:
+ * 
+ * handling pause menu
+ * updating ui objects
+ * loading/reloading/quiting the current scene
+ * 
+ *
+ * 
+-------------------------------------------------------------------------*/
+
 public class GUIManager : MonoBehaviour
 {
     public enum BodyPart { Head, Body, Legs }
     [SerializeField]
     SpriteRenderer spriteRef = null, headRef = null, bodyRef = null, legsRef = null;
     [SerializeField]
-    Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null, gameOverText = null, timerText = null, ammoText = null;
+    Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null, gameOverText = null, timerText = null;
     [SerializeField]
     Slider enemyHealthBar = null, playerHealthBar = null;
 
@@ -51,19 +68,14 @@ public class GUIManager : MonoBehaviour
     public void SetEnemyInfo(Enemy info)
     {
         if (enemyNameText != null) enemyNameText.text = info.enemyName;
-        if (enemyHealthText != null) enemyHealthText.text = "HP: " + info.reactions.Count;
-        float enemyHp = info.reactions.Count;
+        if (enemyHealthText != null) enemyHealthText.text = "HP: " + info.enemyHp;
+        float enemyHp = info.enemyHp;
         if (enemyHealthBar != null) enemyHealthBar.maxValue = enemyHp;
     }
     public void SetTimedTurn(float time)
     {
         if (timerText == null) return;
         timerText.text = "Turn: " + GetTimeText(time);
-    }
-    public void SetAmmoText(int ammo)
-    {
-        if (ammoText == null) return;
-        ammoText.text = "Ammo Left: " + ammo;
     }
     // Scene/Game Control
     public void LoadScene(int sceneIndex)
