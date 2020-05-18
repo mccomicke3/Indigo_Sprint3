@@ -35,11 +35,6 @@ public class EnemyScript : MonoBehaviour
     [SerializeField]
     List<Sprite> headList = new List<Sprite>(), bodyList = new List<Sprite>(), legsList = new List<Sprite>();
 
-    int prevAttack = -1; //indicates the most recent move input by the user -1 is none
-    public List<int> attackSequence = new List<int>();
-    public List<string> knownWeaknesses = new List<string>();
-    //holds the number of moves that a user enters each turn
-
     [Header("Test")]
     [SerializeField] //testing tool used for testing some features
     KeyCode testKey = KeyCode.T;
@@ -56,6 +51,11 @@ public class EnemyScript : MonoBehaviour
 
     [SerializeField]
     KeyCode pauseKey = KeyCode.Escape;
+
+    string prevAttack = "e"; //indicates the most recent move input, default is e for empty. 
+    public string attackSequence = ""; //represents the sequence of entered moves
+    public List<string> knownWeaknesses = new List<string>();
+    //knownweaknesses represents the list of weaknesses known to the user. 
 
     float testDelay = 0, winDelay = 0;
     bool win = false;
@@ -99,7 +99,7 @@ public class EnemyScript : MonoBehaviour
             PlayerEnd(false);
         }
     }
-
+    
     //Generates a New enemy object
 
     public void NewEnemy()
@@ -131,49 +131,23 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
-
-    /*
-     * Takes integer representing the move that a user inputs and adds it to
-     * the list attackSequence
-     * returns void
-     */
-
-    public void AddCombo(int type)
+    public void AddCombo(string move)
     {
-        if (!win)
+        if (!win && (attackSequence.Length <9))
         {
-            attackSequence.Add(type);
+            attackSequence = attackSequence + move;
         }
         UpdateAttackSequence();
-        prevAttack = type;
+        prevAttack = move;
     }
-    /* 
-     *
-     */
+
     public void ClearSequence()
     {
-        attackSequence.Clear();
+        attackSequence = "";
         UpdateAttackSequence();
-        prevAttack = -1;
+        prevAttack = "e";
     }
-    /*
-    public int CheckSequence()
-    {
-        int interrupted = -1;
-        // go through each reaction on the enemy
-        for (int i = 0; i < enemyInfo.reactions.Count; i++)
-        {
-            // check if it is within the range of the attack sequence
-            if (i < attackSequence.Count)
-            {
-                // check if the enemy reacts to the specific attack sequence
-                if (enemyInfo.reactions[i].reactionSet.Contains(attackSequence[i]))
-                    interrupted = i;
-            }
-        }
-        return interrupted;
-    }
-    */
+
     public void TakeDamage()
     { 
     /*
@@ -243,10 +217,11 @@ public class EnemyScript : MonoBehaviour
      * The sequence of moves which a player enters each turn.
      * returns void
      */
+
     void UpdateAttackSequence()
     {
         string tempText = "Attacks: "; //holds the current moves entered
-        for (int i = 0; i < attackSequence.Count; i++)
+        for (int i = 0; i < attackSequence.Length; i++)
         {
             if (i > 0)
             {
@@ -261,20 +236,21 @@ public class EnemyScript : MonoBehaviour
                 string attackName = "";
                 switch (attackSequence[i])
                 {
-                    case 0:
+                    case '0':
                         attackName = "P";
                         break;
-                    case 1:
+                    case '1':
                         attackName = "K";
                         break;
-                    case 2:
+                    case '2':
                         attackName = "T";
                         break;
-                    case 3:
+                    case '3':
                         attackName = "G";
                         break;
                 }
                 tempText += attackName;
+                Debug.Log(tempText);
             }
         }
         guiManager.UpdateAttackSequenceText(tempText);

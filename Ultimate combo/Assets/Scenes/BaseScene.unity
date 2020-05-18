@@ -388,15 +388,15 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 785295904}
+      - m_Target: {fileID: 785295902}
         m_MethodName: AddCombo
-        m_Mode: 3
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 3
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: 3
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &162007001
@@ -744,7 +744,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 785295904}
+      - m_Target: {fileID: 0}
         m_MethodName: ClearSequence
         m_Mode: 1
         m_Arguments:
@@ -868,20 +868,20 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 274676402}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 785295904}
+      - m_Target: {fileID: 785295902}
         m_MethodName: AddCombo
-        m_Mode: 3
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: 0
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &274676402
@@ -2160,7 +2160,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 785295903}
-  - component: {fileID: 785295904}
+  - component: {fileID: 785295902}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -2168,24 +2168,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &785295903
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 785295901}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1032488535}
-  - {fileID: 503122288}
-  - {fileID: 2068235269}
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &785295904
+--- !u!114 &785295902
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2208,8 +2191,6 @@ MonoBehaviour:
   - {fileID: -266100849645729870, guid: d8c0729e141c5e647afb9feaa42187cd, type: 3}
   legsList:
   - {fileID: -8422823296345707691, guid: d8c0729e141c5e647afb9feaa42187cd, type: 3}
-  attackSequence: 
-  knownWeaknesses: []
   testKey: 116
   test: 1
   debugging: 0
@@ -2217,6 +2198,25 @@ MonoBehaviour:
   timedTurnLength: 10
   pauseMenu: {fileID: 862925425}
   pauseKey: 27
+  attackSequence: 
+  knownWeaknesses: []
+--- !u!4 &785295903
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 785295901}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1032488535}
+  - {fileID: 503122288}
+  - {fileID: 2068235269}
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &806607477
 GameObject:
   m_ObjectHideFlags: 0
@@ -2975,19 +2975,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1307fd6107667c438333dbb9b3e5cba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  current: {fileID: 8300000, guid: 59f4893ecf617ea4eaee22c0821adc36, type: 3}
-  currentnum: 0
-  allmusic:
-  - {fileID: 8300000, guid: 59f4893ecf617ea4eaee22c0821adc36, type: 3}
-  - {fileID: 8300000, guid: d87b2615b55716049b6d2483d61060cd, type: 3}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!1 &1280484928
 GameObject:
   m_ObjectHideFlags: 0
@@ -3070,15 +3057,15 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 785295904}
+      - m_Target: {fileID: 785295902}
         m_MethodName: AddCombo
-        m_Mode: 3
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 2
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: 2
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1280484931
@@ -3180,7 +3167,7 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1291765994
@@ -3512,7 +3499,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 785295904}
+      - m_Target: {fileID: 0}
         m_MethodName: TakeDamage
         m_Mode: 1
         m_Arguments:
@@ -3746,15 +3733,15 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 785295904}
+      - m_Target: {fileID: 785295902}
         m_MethodName: AddCombo
-        m_Mode: 3
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 1
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: 1
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1502659528
@@ -4563,7 +4550,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Grab
+  m_Text: Grapple
 --- !u!222 &1968002751
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4862,7 +4849,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 785295904}
+      - m_Target: {fileID: 0}
         m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:

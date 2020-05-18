@@ -170,46 +170,52 @@ public class Enemy : ScriptableObject
 
     }
 
-    /*
-   public List<Weaknesses> ValidateInput(List<Weaknesses> weaknessList, int[] inputCombo)
-   {
-       List<Weaknesses> valid = new List<Weaknesses>();
-       foreach (Weaknesses weakness in weaknessList)
-       {
-           if (inputCombo.Length < weakness.weaknessSet.Count)
-           {
-               // unsure if the condition expression is correctly implemented
-               for (int i = 0; i< (inputCombo.Length - weakness.weaknessSet.Count + 1); i++)
-               {
-                   for (int c = 0; c < weakness.weaknessSet.Count; c++)
-                   {
-                       //????? im lost.
-                       //if (inputCombo[i] == weakness.weaknessSet[c])
-                   }
-               }
-           }
-       }
-       return valid;
-   }
-   */
 
-
-
+    /*-------------------------------------------------------------------------
+     * randomizes the weaknesses and name of the Enemy. 
+     -------------------------------------------------------------------------*/
     public void Randomize()
     {
         enemyName = nameList[Random.Range(0, nameList.Length)];
         weaknesses = WeaknessGenerator();
 
-
     }
 
-    public bool IsFinalCombo()
-        {
-        return true;
+    /*-------------------------------------------------------------------------
+     * returns a integer equal to the number of weaknesses which the inputted
+     * string contains. returns 0 if there are no weaknesses within the 
+     * inputted values.
+    -------------------------------------------------------------------------*/
+
+
+    public int IsCombo(string userinput)
+    {
+        int successnum = 0;
+        foreach (string weakness in weaknesses) {
+            if (userinput.Contains(weakness)) successnum += 1; 
+        }
+        return successnum;
+    }
+    /*-------------------------------------------------------------------------
+     * returns true or false depending on whether the input value contains
+     * all of the enemy weaknesses 
+    -------------------------------------------------------------------------*/
+    public bool IsFinalCombo(string userinput) {
+        if (IsCombo(userinput) == weaknesses.Count) return true;
+        return false;
     }
 
-
-
+    /*-------------------------------------------------------------------------
+     * updates the data held in the known weaknesses baised on the input moves
+     * of the user and the currently known weaknesses of the user. 
+     * - * represents an unknown move in the sequence
+     * - 0, 1, 2, 3 represent known moves in the sequence
+     * returns the updated list of strings known to the user. 
+    -------------------------------------------------------------------------*/
+    public List<string> UpdateKnownWeaknesses(List<string> knownweaknesses, string userinput)
+    {
+        return knownweaknesses; // incomplete
+    }
 
 
     // Start is called before the first frame update
