@@ -59,7 +59,7 @@ public class EnemyScript : MonoBehaviour
 
     float testDelay = 0, winDelay = 0;
     bool win = false;
-    float playerHp = 5, enemyHp = 0;
+    float playerHp = 5, enemyHp = 100;
 
     // Start is called before the first frame update
     void Start()
@@ -76,10 +76,20 @@ public class EnemyScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if ((test && Input.GetKey(testKey)) && testDelay < Time.time)
         {
-            NewEnemy();
+            //NewEnemy();
             testDelay = Time.time + 0.5f;
+            Debug.Log("--------------actual weaknesses----------------");
+            knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, "01230123");
+            foreach (string weakness in enemyInfo.weaknesses) Debug.Log(weakness);
+            Debug.Log("--------------knownweaknesses----------------: 01230123");
+            foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+            
+            
+
+
         }
         if (winDelay > 0 && winDelay < Time.time)
         {
@@ -115,6 +125,7 @@ public class EnemyScript : MonoBehaviour
 
     }
 
+    //randomizes enemy parts
     public void RandomizeEnemyParts()
     {
         if (headList.Count > 1)
@@ -148,7 +159,7 @@ public class EnemyScript : MonoBehaviour
         prevAttack = "e";
     }
 
-    public void TakeDamage()
+    public void Enemyturn()
     { 
     /*
      * will have to determine if the player will take damage?
@@ -276,7 +287,7 @@ public class EnemyScript : MonoBehaviour
             if (tempTime < 1)
             {
                 playerHp--;
-                guiManager.StartUpdateHealth(enemyHp, playerHp);
+                guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
                 tempTime = timedTurnLength;
             }
             yield return new WaitForSeconds(1);

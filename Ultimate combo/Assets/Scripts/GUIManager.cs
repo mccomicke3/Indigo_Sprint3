@@ -113,7 +113,7 @@ public class GUIManager : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
             if (enemyHealthBar != null)
             {
-                enemyHealthBar.value = Mathf.Lerp(enemyHealthBar.value, eHealth, 10);
+                enemyHealthBar.value = Mathf.Lerp(enemyHealthBar.value, eHealth, 100);
             }
         }
         while (Mathf.Abs(playerHealthBar.value - pHealth) > 0.01f)

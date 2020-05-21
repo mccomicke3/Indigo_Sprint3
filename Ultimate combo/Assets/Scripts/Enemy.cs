@@ -214,7 +214,57 @@ public class Enemy : ScriptableObject
     -------------------------------------------------------------------------*/
     public List<string> UpdateKnownWeaknesses(List<string> knownweaknesses, string userinput)
     {
-        return knownweaknesses; // incomplete
+        List<string> outlist = new List<string>();
+        string tempstring = null;
+        string largeststring = null;
+        int success = 0;
+        int maxsuccess = 0;
+
+        for (int j = 0; j < this.weaknesses.Count; j++) //for each weakness in knownweakness
+        {
+            maxsuccess = 0;
+            tempstring = "";
+            success = 0;
+
+            for (int k = 0; k < this.weaknesses[j].Length; k++) // for each move in weakness
+            {
+                //success = 0; //set counter to 0
+                //makes an empty string
+
+                for (int i = 0; i < userinput.Length; i++) //for each attack in userinput
+                {
+
+                    if (userinput[i] == this.weaknesses[j][k]) //checks if the attack matches weakness
+                    {
+                        tempstring = tempstring + userinput[i]; //if it does it adds it to temp
+                        success++; //iterate success
+                    }
+
+                    else
+                    {
+                        success = 0; tempstring = "";
+                        }
+
+                    if (success > maxsuccess)
+                    {//if the largest string is the current combo then save that one
+                        largeststring = tempstring;
+                        maxsuccess = success;
+                    }
+
+                }
+
+            }
+
+            for (int s = 0; s < (this.weaknesses[j].Length - maxsuccess); s++)
+            {
+                largeststring = largeststring + "*";
+            }
+            outlist.Add(largeststring);
+
+        }
+
+        return outlist;
+
     }
 
 
