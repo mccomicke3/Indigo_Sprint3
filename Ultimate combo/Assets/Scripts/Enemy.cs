@@ -266,14 +266,14 @@ public class Enemy : ScriptableObject
 
 
     string UpdateWeakness(string userinput, string knownweakness, string actualweakness)
-
+        
     {
         if (userinput.Contains(actualweakness)) return actualweakness;
         if (knownweakness == actualweakness) return actualweakness;
         string teststring = "";
         int success = 0;
-        for (int i = 0; i < actualweakness.Length; i++)
-        {
+        for (int i = 0; i < actualweakness.Length; i++) 
+        { // searches and sees if there are newly discovered moves
             teststring = teststring + actualweakness[i];
             if (userinput.Contains(teststring))
             {

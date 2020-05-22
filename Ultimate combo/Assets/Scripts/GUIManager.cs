@@ -8,9 +8,9 @@ using UnityEngine.SceneManagement;
  * GUIManager
  * Script to make updating the visual elements of the game easier
  * also makes some simple functions for loading scenes and quitting the game'
- * To be attached to: 
- *      The EnemyScript Script
- *      The EventSystem Script
+ * To be a component of 
+ *      The EventSystem
+ * A reference of the eventsystem is to be attached to the enemy object
  * Responsible for:
  * 
  * handling pause menu
@@ -27,38 +27,34 @@ public class GUIManager : MonoBehaviour
     [SerializeField]
     SpriteRenderer spriteRef = null, headRef = null, bodyRef = null, legsRef = null;
     [SerializeField]
-    Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null, gameOverText = null, timerText = null;
+    Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null;
+    Text gameOverText = null, timerText = null, damageText = null;
     [SerializeField]
-    Slider enemyHealthBar = null, playerHealthBar = null;
-
-    [Header("Menu")]
+    Slider enemyHealthBar = null, playerHealthBar = null; Slider timerSlider;
     [SerializeField]
-    bool test = false;
-    [SerializeField]
-    GameObject pauseMenu = null, gameOverMenu = null;
+    GameObject enemyHighlight = null;
     [SerializeField]
     KeyCode pauseKey = KeyCode.Escape;
-    Color startColor = Color.white;
-    float colorDelay = 0;
+    [Header("Menu")]
+    [SerializeField]
+    GameObject pauseMenu = null, loseMenu = null, winMenu = null;
+
+   
+      
     float pHealth = 0, eHealth = 0;
+    float colorDelay = 0.5f;
+
     // Start is called before the first frame update
     void Start()
     {
-        if (spriteRef != null) startColor = spriteRef.color;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(pauseKey))
-        {
-            ToggleMenu(pauseMenu);
-        }
-        if (colorDelay > 0 && colorDelay < Time.time)
-        {
-            spriteRef.color = startColor;
-            colorDelay = 0;
-        }
+
+        
     }
     // GUI Control
     public void SetPlayerMaxHP(float maxHp)
@@ -77,6 +73,14 @@ public class GUIManager : MonoBehaviour
         if (timerText == null) return;
         timerText.text = "Turn: " + GetTimeText(time);
     }
+
+    public void ShowEnemyHighlight(bool show)
+    {
+        if (enemyHighlight != null) enemyHighlight.SetActive(show);
+    }
+
+
+
     // Scene/Game Control
     public void LoadScene(int sceneIndex)
     {
@@ -90,9 +94,9 @@ public class GUIManager : MonoBehaviour
     {
         Application.Quit();
     }
-    public void ToggleMenu(GameObject menu)
+    public void ToggleMenu()
     {
-        if (menu != null) menu.SetActive(!menu.activeInHierarchy);
+        if (pauseMenu != null) pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
     }
     public void SetSpriteColor(Color spriteColor)
     {
@@ -106,6 +110,14 @@ public class GUIManager : MonoBehaviour
         pHealth = playerHealth;
         StartCoroutine("UpdateHealth");
     }
+
+
+    /*-------------------------------------------------------------------------
+    Update health coroutine, which sets the values of the healthbars to be 
+    a particular value after a set amount of time. 
+    -------------------------------------------------------------------------*/
+
+
     IEnumerator UpdateHealth()
     {
         while (Mathf.Abs(enemyHealthBar.value - eHealth) > 0.01f)
@@ -146,8 +158,8 @@ public class GUIManager : MonoBehaviour
     }
     public void EndGame(bool win)
     {
-        if (gameOverMenu == null || gameOverText == null) return;
-        if (!gameOverMenu.activeInHierarchy) ToggleMenu(gameOverMenu);
+        if (loseMenu == null || gameOverText == null) return;
+        if (!loseMenu.activeInHierarchy) ToggleMenu();
         gameOverText.text = (win)? "You Win!" : "Game Over";
     }
     string GetTimeText(float time)
