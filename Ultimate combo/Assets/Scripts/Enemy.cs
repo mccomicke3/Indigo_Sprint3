@@ -191,8 +191,10 @@ public class Enemy : ScriptableObject
     public int IsCombo(string userinput)
     {
         int successnum = 0;
-        foreach (string weakness in weaknesses) {
-            if (userinput.Contains(weakness)) successnum += 1; 
+        foreach (string weakness in weaknesses)
+        {
+            if (userinput.Contains(weakness)) successnum += 1;
+            //Debug.Log("searching for :" + weakness);
         }
         return successnum;
     }
@@ -200,7 +202,8 @@ public class Enemy : ScriptableObject
      * returns true or false depending on whether the input value contains
      * all of the enemy weaknesses 
     -------------------------------------------------------------------------*/
-    public bool IsFinalCombo(string userinput) {
+    public bool IsFinalCombo(string userinput)
+    {
         if (IsCombo(userinput) == weaknesses.Count) return true;
         return false;
     }
@@ -210,73 +213,113 @@ public class Enemy : ScriptableObject
      * of the user and the currently known weaknesses of the user. 
      * - * represents an unknown move in the sequence
      * - 0, 1, 2, 3 represent known moves in the sequence
-     * returns the updated list of strings known to the user. 
+     * returns the updated list of strings known to the user.
     -------------------------------------------------------------------------*/
     public List<string> UpdateKnownWeaknesses(List<string> knownweaknesses, string userinput)
     {
-        List<string> outlist = new List<string>();
-        string tempstring = null;
-        string largeststring = null;
-        int success = 0;
-        int maxsuccess = 0;
+        
+        if (knownweaknesses.Count == 0) return CensoredWeaknesses();
+        List<string> updatedlist = new List<string>();
 
-        for (int j = 0; j < this.weaknesses.Count; j++) //for each weakness in knownweakness
+        for(int weaknessindex = 0 ; weaknessindex < weaknesses.Count; weaknessindex++)
         {
-            maxsuccess = 0;
-            tempstring = "";
-            success = 0;
-
-            for (int k = 0; k < this.weaknesses[j].Length; k++) // for each move in weakness
-            {
-                //success = 0; //set counter to 0
-                //makes an empty string
-
-                for (int i = 0; i < userinput.Length; i++) //for each attack in userinput
-                {
-
-                    if (userinput[i] == this.weaknesses[j][k]) //checks if the attack matches weakness
-                    {
-                        tempstring = tempstring + userinput[i]; //if it does it adds it to temp
-                        success++; //iterate success
-                    }
-
-                    else
-                    {
-                        success = 0; tempstring = "";
-                        }
-
-                    if (success > maxsuccess)
-                    {//if the largest string is the current combo then save that one
-                        largeststring = tempstring;
-                        maxsuccess = success;
-                    }
-
-                }
-
-            }
-
-            for (int s = 0; s < (this.weaknesses[j].Length - maxsuccess); s++)
-            {
-                largeststring = largeststring + "*";
-            }
-            outlist.Add(largeststring);
-
+            string updatedweakness = UpdateWeakness(userinput, knownweaknesses[weaknessindex],
+               weaknesses[weaknessindex]);
+            updatedlist.Add(updatedweakness);
         }
 
+        return updatedlist;
+    }
+
+    /*-------------------------------------------------------------------------
+    returns a list of censored weaknesses, that is a list of strings which are
+    simply asterisks in the same order and number as the order and number
+    of weaknesses which the enemy has.
+    -------------------------------------------------------------------------*/
+    public List<string> CensoredWeaknesses()
+    {
+        List<string> outlist = new List<string>();
+        foreach (string weakness in weaknesses)
+        {
+            string outstring = "";
+            foreach (char move in weakness)
+            {
+                outstring += "*";
+            }
+            outlist.Add(outstring);
+        }
         return outlist;
+    }
+
+    /*-------------------------------------------------------------------------
+     * helper function for UpdateKnownWeakness
+     * updates the data held in an individual string, being of the form
+     * of asterisks and numbers depending on how much information the player
+     * has availible to them at any given moment.
+     * ie. "01**" or "****" or "0123"
+     * parameters are:
+     * userinput ie. 10232100
+     * knownweakness ie. 00**
+     * actualweakness ie. 0022
+     * returns the updated string.
+    -------------------------------------------------------------------------*/
+
+
+    string UpdateWeakness(string userinput, string knownweakness, string actualweakness)
+
+    {
+        if (userinput.Contains(actualweakness)) return actualweakness;
+        if (knownweakness == actualweakness) return actualweakness;
+        string teststring = "";
+        int success = 0;
+        for (int i = 0; i < actualweakness.Length; i++)
+        {
+            teststring = teststring + actualweakness[i];
+            if (userinput.Contains(teststring))
+            {
+                success++;
+            }
+            else break;
+
+        }
+        if (success == 0) //If no new moves are discovered
+        {
+            return knownweakness;
+        }
+        else //if new moves are discovered
+        {
+            knownweakness = "";
+
+            for (int i = 0; i < success; i++)
+            {
+                knownweakness = knownweakness + actualweakness[i];
+            }
+
+            for (int i = actualweakness.Length - success; i > 0; i--)
+            {
+                knownweakness = knownweakness + "*";
+            }
+
+            return knownweakness;
+        }
 
     }
+
+
+
+
+
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

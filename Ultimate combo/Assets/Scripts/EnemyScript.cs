@@ -52,12 +52,11 @@ public class EnemyScript : MonoBehaviour
     [SerializeField]
     KeyCode pauseKey = KeyCode.Escape;
 
-    string prevAttack = "e"; //indicates the most recent move input, default is e for empty. 
     public string attackSequence = ""; //represents the sequence of entered moves
     public List<string> knownWeaknesses = new List<string>();
     //knownweaknesses represents the list of weaknesses known to the user. 
 
-    float testDelay = 0, winDelay = 0;
+    float testDelay = 0.5f, winDelay = 0;
     bool win = false;
     float playerHp = 5, enemyHp = 100;
 
@@ -79,18 +78,10 @@ public class EnemyScript : MonoBehaviour
 
         if ((test && Input.GetKey(testKey)) && testDelay < Time.time)
         {
-            //NewEnemy();
-            testDelay = Time.time + 0.5f;
-            Debug.Log("--------------actual weaknesses----------------");
-            knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, "01230123");
-            foreach (string weakness in enemyInfo.weaknesses) Debug.Log(weakness);
-            Debug.Log("--------------knownweaknesses----------------: 01230123");
-            foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
-            
-            
-
-
+            Enemyturn();
+            testDelay = Time.time + testDelay;
         }
+
         if (winDelay > 0 && winDelay < Time.time)
         {
             win = false;
@@ -98,12 +89,14 @@ public class EnemyScript : MonoBehaviour
             NewEnemy();
             winDelay = 0;
         }
+
         if (Input.GetKeyDown(KeyCode.W))
         {
             Debug.Log("weak!");
             enemyInfo.weaknesses = enemyInfo.WeaknessGenerator();
             currentWeaknesses = enemyInfo.weaknesses;
         }
+
         if (playerHp <= 0)
         {
             PlayerEnd(false);
@@ -121,8 +114,7 @@ public class EnemyScript : MonoBehaviour
         RestorePlayerHealth();
         guiManager.StartUpdateHealth(enemyHp, playerHp);
         RandomizeEnemyParts();
-        knownWeaknesses = enemyInfo.weaknesses;
-
+        knownWeaknesses = enemyInfo.CensoredWeaknesses();
     }
 
     //randomizes enemy parts
@@ -144,71 +136,120 @@ public class EnemyScript : MonoBehaviour
 
     public void AddCombo(string move)
     {
-        if (!win && (attackSequence.Length <9))
+        if (!win && (attackSequence.Length < 8))
         {
             attackSequence = attackSequence + move;
         }
+        //Debug.Log(move);
         UpdateAttackSequence();
-        prevAttack = move;
     }
 
     public void ClearSequence()
     {
         attackSequence = "";
         UpdateAttackSequence();
-        prevAttack = "e";
     }
 
     public void Enemyturn()
-    { 
-    /*
-     * will have to determine if the player will take damage?
-     * 
-     * 
     {
-        if (timedTurn)
-        {
-            StopCoroutine("TimedTurn");
-        }
+        Debug.Log("--------------actual weaknesses----------------");
+        knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, "");
+        foreach (string weakness in enemyInfo.weaknesses) Debug.Log(weakness);
 
-        int failedAttack = CheckSequence() - 1;
-        Debug.Log(failedAttack);
-        // if the attack got interrupted
-        if (failedAttack > -1)
+        Debug.Log("--------------before knownweaknesses----------------: ");
+        foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+
+        Debug.Log("attackinput: " + attackSequence);
+        Debug.Log("Number of combos contained: " + enemyInfo.IsCombo(attackSequence));
+        Debug.Log("Is final combo : " + enemyInfo.IsFinalCombo(attackSequence));
+        knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, attackSequence);
+
+        Debug.Log("--------------after knownweaknesses----------------: ");
+        foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+
+        ClearSequence();
+        /*
+        Debug.Log("--------------actual weaknesses----------------");
+        knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, "");
+        foreach (string weakness in enemyInfo.weaknesses) Debug.Log(weakness);
+
+        Debug.Log("--------------before knownweaknesses----------------: ");
+        foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+
+        Debug.Log("attackinput: \n" + attackSequence);
+        //Debug.Log("Number of combos contained: " + enemyInfo.IsCombo(attackSequence));
+        //Debug.Log("Is final combo : " + enemyInfo.IsFinalCombo(attackSequence));
+        knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, attackSequence);
+
+        Debug.Log("--------------after knownweaknesses----------------: ");
+        foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+        Debug.Log("--------------inital weakness----------------");
+        Debug.Log(enemyInfo.weaknesses[0]);
+        Debug.Log("--------------known weakness before----------------");
+        foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+        Debug.Log(knownWeaknesses[0]);
+        Debug.Log("attackinput:" + attackSequence);
+        Debug.Log("--------------known weakness after----------------");
+        knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, attackSequence);
+        Debug.Log(knownWeaknesses[0]);
+        */
+
+
+
+
+
+        /*
         {
-            for (int i = attackSequence.Count - 1; i > 0; i--)
+
+            if (timedTurn)
+
             {
-                if (i > failedAttack)
-                    attackSequence.RemoveAt(i);
+                StopCoroutine("TimedTurn");
             }
-            guiManager.SetSpriteColor(Color.red);
-            playerHp--;
-            Debug.Log("Player HP: " + playerHp);
-        }
-        else
-        {
-            if (CheckWin())
+
+            int failedAttack = CheckSequence() - 1;
+            Debug.Log(failedAttack);
+            // if the attack got interrupted
+
+            if (failedAttack > -1)
             {
-                if (!win)
+                for (int i = attackSequence.Count - 1; i > 0; i--)
                 {
-                    win = !win;
-                    guiManager.SetSpriteColor(Color.green);
-                    winDelay = Time.time + 3;
+                    if (i > failedAttack)
+                        attackSequence.RemoveAt(i);
+                }
+                guiManager.SetSpriteColor(Color.red);
+                playerHp--;
+                Debug.Log("Player HP: " + playerHp);
+            }
+            else
+            {
+                if (CheckWin())
+                {
+                    if (!win)
+                    {
+                        win = !win;
+                        guiManager.SetSpriteColor(Color.green);
+                        winDelay = Time.time + 3;
+                    }
                 }
             }
-        }
-        ClearSequence();
-        UpdateAttackSequence();
-        enemyHp = enemyInfo.reactions.Count - attackSequence.Count;
-        Debug.Log("Enemy HP: " + enemyHp);
-        guiManager.StartUpdateHealth(enemyHp, playerHp);
+            ClearSequence();
+            UpdateAttackSequence();
+            enemyHp = enemyInfo.reactions.Count - attackSequence.Count;
+            Debug.Log("Enemy HP: " + enemyHp);
+            guiManager.StartUpdateHealth(enemyHp, playerHp);
 
-        if (timedTurn)
-        {
-            StartCoroutine("TimedTurn");
-        }
-    
-    */}
+            if (timedTurn)
+            {
+                StartCoroutine("TimedTurn");
+            }
+
+        }*/
+    }
 
     public bool CheckWin()
     {
@@ -261,7 +302,8 @@ public class EnemyScript : MonoBehaviour
                         break;
                 }
                 tempText += attackName;
-                Debug.Log(tempText);
+                //Debug.Log(tempText);
+                //Debug.Log(attackSequence[i]);
             }
         }
         guiManager.UpdateAttackSequenceText(tempText);

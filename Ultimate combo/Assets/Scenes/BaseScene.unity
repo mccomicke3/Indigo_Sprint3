@@ -2195,7 +2195,7 @@ MonoBehaviour:
   test: 1
   debugging: 0
   timedTurn: 1
-  timedTurnLength: 10
+  timedTurnLength: 30
   pauseMenu: {fileID: 862925425}
   pauseKey: 27
   attackSequence: 
@@ -3499,8 +3499,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: TakeDamage
+      - m_Target: {fileID: 785295902}
+        m_MethodName: Enemyturn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
