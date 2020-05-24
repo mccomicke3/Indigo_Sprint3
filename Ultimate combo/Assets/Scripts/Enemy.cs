@@ -181,12 +181,22 @@ public class Enemy : ScriptableObject
 
     }
 
+
+
+    public int NumCombo(string weakness, string userinput)
+    {
+        if (userinput.Length == 0) return 0;
+        int numcount = (userinput.Length - userinput.Replace(weakness, "").Length / weakness.Length);
+        return numcount;
+    }
+
+
+
     /*-------------------------------------------------------------------------
      * returns a integer equal to the number of weaknesses which the inputted
      * string contains. returns 0 if there are no weaknesses within the 
      * inputted values.
     -------------------------------------------------------------------------*/
-
 
     public int IsCombo(string userinput)
     {
@@ -202,6 +212,8 @@ public class Enemy : ScriptableObject
      * returns true or false depending on whether the input value contains
      * all of the enemy weaknesses 
     -------------------------------------------------------------------------*/
+
+
     public bool IsFinalCombo(string userinput)
     {
         if (IsCombo(userinput) == weaknesses.Count) return true;

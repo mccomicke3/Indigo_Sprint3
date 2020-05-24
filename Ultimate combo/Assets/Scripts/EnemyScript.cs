@@ -159,8 +159,8 @@ public class EnemyScript : MonoBehaviour
         knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, "");
         foreach (string weakness in enemyInfo.weaknesses) Debug.Log(weakness);
 
-        Debug.Log("--------------before knownweaknesses----------------: ");
-        foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+        //Debug.Log("--------------before knownweaknesses----------------: ");
+        //foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
 
         Debug.Log("attackinput: " + attackSequence);
         Debug.Log("Number of combos contained: " + enemyInfo.IsCombo(attackSequence));
@@ -170,6 +170,7 @@ public class EnemyScript : MonoBehaviour
         Debug.Log("--------------after knownweaknesses----------------: ");
         foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
 
+        StartCoroutine(DealDamage(attackSequence));
         ClearSequence();
         
         if (CheckWin())
@@ -191,6 +192,56 @@ public class EnemyScript : MonoBehaviour
         }
         
     }
+
+    /*-------------------------------------------------------------------------
+     * Deals an amount of damage for each attack to the enemy,
+     * Will give an aplified effect upon completion of the subcombos, 
+     * if the inputed string has all subcombos, it will deal a large amount 
+     * of damage.
+     * repsonsible for:
+     * updating damage text
+     * dealing damage
+     * 
+     * returns void
+    -------------------------------------------------------------------------*/
+
+    IEnumerator DealDamage(string inputcombo)
+    {
+        string potentialcombo = "";
+
+        foreach(char move in inputcombo)
+        {
+            potentialcombo = potentialcombo + move;
+
+
+
+            switch (move)
+            {
+                case '0': //punch
+                    guiManager.UpdateDamageText(5);
+                    break;
+
+                case '1': //kick
+                    guiManager.UpdateDamageText(113);
+                    break;
+
+                case '2': //parry
+                    guiManager.UpdateDamageText(0);
+                    break;
+
+                case '3': //taunt
+                    guiManager.UpdateDamageText(2019);
+                    break;
+
+            }
+            yield return new WaitForSeconds(0.4f);
+        }
+
+        guiManager.UpdateDamageText(-1);
+    }
+
+
+
 
     public bool CheckWin()
     {

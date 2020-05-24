@@ -28,6 +28,7 @@ public class GUIManager : MonoBehaviour
     SpriteRenderer spriteRef = null, headRef = null, bodyRef = null, legsRef = null;
     [SerializeField]
     Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null;
+    [SerializeField]
     Text gameOverText = null, timerText = null, damageText = null;
     [SerializeField]
     Slider enemyHealthBar = null, playerHealthBar = null; Slider timerSlider;
@@ -39,8 +40,8 @@ public class GUIManager : MonoBehaviour
     [SerializeField]
     GameObject pauseMenu = null, loseMenu = null, winMenu = null;
 
-   
-      
+
+
     float pHealth = 0, eHealth = 0;
     float colorDelay = 0.5f;
 
@@ -78,7 +79,27 @@ public class GUIManager : MonoBehaviour
     {
         if (enemyHighlight != null) enemyHighlight.SetActive(show);
     }
+    /*-------------------------------------------------------------------------
+     * Updates the damage text
+     * If it is given a negative value, it will hide the text instead of just
+     * displaying it. 
+    -------------------------------------------------------------------------*/
 
+    public void UpdateDamageText(int damage)
+    {
+
+        if (damageText == null) return;
+        if (!damageText.IsActive()){
+            damageText.gameObject.SetActive(true);
+        }
+        if (damage < 0)
+        {
+            damageText.gameObject.SetActive(false);
+            return;
+        }
+        damageText.text = damage.ToString();
+        //damageText.gameObject.SetActive(false);
+    }
 
 
     // Scene/Game Control
