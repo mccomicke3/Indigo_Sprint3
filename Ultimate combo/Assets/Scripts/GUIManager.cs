@@ -33,12 +33,15 @@ public class GUIManager : MonoBehaviour
     [SerializeField]
     Slider enemyHealthBar = null, playerHealthBar = null; Slider timerSlider;
     [SerializeField]
+    Image enemyHpFill;
+    [SerializeField]
     GameObject enemyHighlight = null;
     [SerializeField]
     KeyCode pauseKey = KeyCode.Escape;
     [Header("Menu")]
     [SerializeField]
     GameObject pauseMenu = null, loseMenu = null, winMenu = null;
+    
 
 
 
@@ -100,6 +103,21 @@ public class GUIManager : MonoBehaviour
         damageText.text = damage.ToString();
         //damageText.gameObject.SetActive(false);
     }
+    /*-------------------------------------------------------------------------
+     * changes the color on enemy health bar, meant to make it more clear when
+     * damage is dealt to the enemy. if true highlights the color, otherwise
+     * will set it to its original value. 
+    -------------------------------------------------------------------------*/
+    public void HighlightEnemyHealth(bool status)
+    {
+        if (status) {
+            enemyHpFill.color = new Color(255, 150, 150);
+        }
+        else
+        {
+            enemyHpFill.color = new Color(255, 0, 0);
+        }
+    }
 
 
     // Scene/Game Control
@@ -143,20 +161,24 @@ public class GUIManager : MonoBehaviour
     {
         while (Mathf.Abs(enemyHealthBar.value - eHealth) > 0.01f)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.05f);
             if (enemyHealthBar != null)
             {
-                enemyHealthBar.value = Mathf.Lerp(enemyHealthBar.value, eHealth, 100);
+                enemyHealthBar.value = Mathf.Lerp(enemyHealthBar.value, eHealth, 0.8f);
             }
+            
         }
+        enemyHealthBar.value = eHealth;
+
         while (Mathf.Abs(playerHealthBar.value - pHealth) > 0.01f)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             if (playerHealthBar != null)
             {
-                playerHealthBar.value = Mathf.Lerp(playerHealthBar.value, pHealth, 3);
+                playerHealthBar.value = Mathf.Lerp(playerHealthBar.value, pHealth, 0.8f);
             }
         }
+        playerHealthBar.value = pHealth;
     }
     public void EnemyBodySprite(BodyPart part, Sprite sprite)
     {
