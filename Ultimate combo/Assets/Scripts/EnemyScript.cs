@@ -40,10 +40,11 @@ public class EnemyScript : MonoBehaviour
     KeyCode testKey = KeyCode.T;
 
     [SerializeField]
-    bool test = false, debugging = false, timedTurn = true;
+    bool test = false, debugging = false;
 
     [SerializeField, Tooltip("Time in seconds")]
-    float timedTurnLength = 30;
+    float timedTurnDefault = 15;
+    float timedTurnLength;
 
     [SerializeField]
     KeyCode pauseKey = KeyCode.Escape;
@@ -55,7 +56,11 @@ public class EnemyScript : MonoBehaviour
     public int gamestate = (int)Gamestate.Combat;
 
     float testDelay = 0.5f, winDelay = 0;
-    float playerHp = 5;
+    float playerHp = 50;
+
+    int parrycount = 0;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -63,10 +68,8 @@ public class EnemyScript : MonoBehaviour
         NewEnemy();
         if (guiManager != null) guiManager.SetPlayerMaxHP(playerHp);
 
-        if (timedTurn)
-        {
-            StartCoroutine("TimedTurn");
-        }
+        StartCoroutine("TimedTurn");
+        
     }
 
     // Update is called once per frame
@@ -102,6 +105,7 @@ public class EnemyScript : MonoBehaviour
         guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
         RandomizeEnemyParts();
         knownWeaknesses = enemyInfo.CensoredWeaknesses();
+        timedTurnLength = timedTurnDefault;
     }
 
     //randomizes enemy parts
@@ -152,27 +156,38 @@ public class EnemyScript : MonoBehaviour
     public void Enemyturn()
     {
         guiManager.ShowEnemyHighlight(false);
-        if (timedTurn)
 
+        StopCoroutine("TimedTurn");
+        
+        timedTurnLength = timedTurnDefault;
+
+
+
+        if (debugging)
         {
-            StopCoroutine("TimedTurn");
+            Debug.Log("--------------actual weaknesses----------------");
+            knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, "");
+            foreach (string weakness in enemyInfo.weaknesses) Debug.Log(weakness);
+
+            //Debug.Log("--------------before knownweaknesses----------------: ");
+            //foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+
+            Debug.Log("attackinput: " + attackSequence);
+            Debug.Log("Number of combos contained: " + enemyInfo.IsCombo(attackSequence));
+            Debug.Log("Is final combo : " + enemyInfo.IsFinalCombo(attackSequence));
         }
 
 
-        Debug.Log("--------------actual weaknesses----------------");
-        knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, "");
-        foreach (string weakness in enemyInfo.weaknesses) Debug.Log(weakness);
+        knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, attackSequence);
+        guiManager.UpdateKnownComboText(knownWeaknesses);
+        if (debugging) { 
 
-        //Debug.Log("--------------before knownweaknesses----------------: ");
-        //foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+            Debug.Log("--------------after knownweaknesses----------------: ");
+            foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+        }
 
-        Debug.Log("attackinput: " + attackSequence);
-        Debug.Log("Number of combos contained: " + enemyInfo.IsCombo(attackSequence));
-        Debug.Log("Is final combo : " + enemyInfo.IsFinalCombo(attackSequence));
         knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, attackSequence);
 
-        Debug.Log("--------------after knownweaknesses----------------: ");
-        foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
 
         StartCoroutine(DealDamage(attackSequence));
         ClearSequence();
@@ -186,14 +201,12 @@ public class EnemyScript : MonoBehaviour
             }
         }
 
+
         UpdateAttackSequence();
         //enemyHp = enemyHp - 20;
         guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
 
-        if (timedTurn)
-        {
-            StartCoroutine("TimedTurn");
-        }
+
         
     }
 
@@ -211,16 +224,19 @@ public class EnemyScript : MonoBehaviour
 
     IEnumerator DealDamage(string inputcombo)
     {
+        StopCoroutine("TimedTurn");
         string potentialcombo = "";
         int damagedealt;
         int punchbasedamage = 4;
         int kickbasedamage = 3;
         int parrybasedamage = 1;
         int tauntbasedamage = 0;
-        int punchcomboscaling = 5;
+        int punchcomboscaling = 6;
         int kickcomboscaling = 8;
         int parrycomboscaling = 6;
         int tauntcomboscaling = 1;
+        int parrycount = 0;
+
         Dictionary<string, int> comboinfo;
         Dictionary<string, int> prevcomboinfo = null;
 
@@ -245,6 +261,7 @@ public class EnemyScript : MonoBehaviour
                         if (comboinfo[weakness] > prevcomboinfo[weakness])//combo acheived
                         {
                             damagedealt += (punchcomboscaling * weakness.Length); //combo effect
+                            damagedealt += 10; // punch combos just deal extra flat damage.
                             Debug.Log("punchcombo");
                         }
                     }
@@ -260,6 +277,7 @@ public class EnemyScript : MonoBehaviour
                         if (comboinfo[weakness] > prevcomboinfo[weakness])//combo acheived
                         {
                             damagedealt += (kickcomboscaling * weakness.Length); //combo effect
+                            timedTurnLength += 3 * weakness.Length; // kick adds more time
                             Debug.Log("kickcombo");
                         }
                     }
@@ -275,6 +293,7 @@ public class EnemyScript : MonoBehaviour
                         if (comboinfo[weakness] > prevcomboinfo[weakness])//combo acheived
                         {
                             damagedealt += (parrycomboscaling * weakness.Length); //combo effect
+                            parrycount += 1; //parry combo prevents 1 attack from the enemy
                             Debug.Log("parrycombo");
                         }
                     }
@@ -290,6 +309,8 @@ public class EnemyScript : MonoBehaviour
                         if (comboinfo[weakness] > prevcomboinfo[weakness])//combo acheived
                         {
                             damagedealt += (tauntcomboscaling * weakness.Length); //combo effect
+                            playerHp += 4 * weakness.Length; //taunt combo provides heal effect
+                            guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
                             Debug.Log("tauntcombo");
                         }
                     }
@@ -311,13 +332,56 @@ public class EnemyScript : MonoBehaviour
             guiManager.UpdateDamageText(-1);
             yield return new WaitForSeconds(0.2f);
 
-
+        }
+        if (CheckWin())
+        {
+            //resolve success
         }
 
         guiManager.UpdateDamageText(-1);
+        StartCoroutine(EnemyAttack(parrycount));
     }
 
 
+
+    IEnumerator EnemyAttack(int parrycount)
+    {
+        StopCoroutine("DealDamage");
+        for (int i = 0; i < enemyInfo.enemynumattacks; i++)
+        {
+            yield return new WaitForSeconds(0.2f);
+            if (parrycount > 0)
+            {
+                parrycount -= 1;
+
+                guiManager.HighlightEnemyHealth(true);
+                yield return new WaitForSeconds(0.1f);
+                enemyInfo.DealDamage(3);
+                guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
+                guiManager.HighlightEnemyHealth(false);
+                Debug.Log("Attack Parried");
+
+            }
+
+
+            else
+            {
+                playerHp -= enemyInfo.enemydamage;
+                guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
+            }
+
+        }
+        
+        if (CheckLoss())
+        {
+            //resolve Loss
+        }
+
+        else StartCoroutine("TimedTurn");
+
+    }
+
+       
 
 
     public bool CheckWin()
@@ -330,9 +394,21 @@ public class EnemyScript : MonoBehaviour
 
     }
 
+    public bool CheckLoss()
+    {
+        if (playerHp < 0) {
+            gamestate = (int)Gamestate.Loss;
+            return true;
+        }
+        return false;
+    }
+
+
+
+
     void PlayerEnd(bool win)
     {
-        if (timedTurn) StopCoroutine("TimedTurn");
+        StopCoroutine("TimedTurn");
         guiManager.EndGame(win);
     }
 
@@ -350,60 +426,61 @@ public class EnemyScript : MonoBehaviour
             {
                 tempText += "/";
             }
-            if (debugging)
+
+
+            string attackName = "";
+            switch (attackSequence[i])
             {
-                tempText += attackSequence[i];
+                case '0':
+                    attackName = "P";
+                    break;
+                case '1':
+                    attackName = "K";
+                    break;
+                case '2':
+                    attackName = "Py";
+                    break;
+                case '3':
+                    attackName = "T";
+                    break;
             }
-            else
-            {
-                string attackName = "";
-                switch (attackSequence[i])
-                {
-                    case '0':
-                        attackName = "P";
-                        break;
-                    case '1':
-                        attackName = "K";
-                        break;
-                    case '2':
-                        attackName = "P";
-                        break;
-                    case '3':
-                        attackName = "T";
-                        break;
-                }
-                tempText += attackName;
-                //Debug.Log(tempText);
-                //Debug.Log(attackSequence[i]);
-            }
+            tempText = tempText + attackName;
+            //Debug.Log(tempText);
+            //Debug.Log(attackSequence[i]);
+            
         }
         guiManager.UpdateAttackSequenceText(tempText);
     }
 
     void RestorePlayerHealth()
     {
-        playerHp = 5;
+        playerHp = 50;
         guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
     }
 
 
-    /* Declares a coroutine to keep track of the limited time between turns 
-     */
+    /*-------------------------------------------------------------------------
+     * Coroutine for keeping track of the amount of time remaining on the 
+     * players turn. responsible for:
+     * updating time ui through gui manager
+     * counting down
+     * ending the players turn 
+    -------------------------------------------------------------------------*/
 
     IEnumerator TimedTurn()
     {
         float tempTime = timedTurnLength;
-        while (timedTurn)
+        while (tempTime > 0)
         {
             guiManager.SetTimedTurn(tempTime);
             tempTime--;
-            if (tempTime < 1)
-            {
-                playerHp--;
-                guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
-                tempTime = timedTurnLength;
-            }
             yield return new WaitForSeconds(1);
+
         }
+
+        //turn over ui? maybe idk, but it would go here. 
+        timedTurnLength = timedTurnDefault; 
+        guiManager.SetTimedTurn(0);
+        Enemyturn();
     }
 }

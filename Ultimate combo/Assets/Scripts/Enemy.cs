@@ -24,6 +24,7 @@ public class Enemy : ScriptableObject
     public string enemyName = "Brocc";
     public List<string> weaknesses = null;
     public Sprite enemyImage = null, enemyHead = null, enemyBody = null, enemyLegs = null;
+    public int enemynumattacks = 4, enemydamage = 5;
 
     public Enemy() //class constructor
     {

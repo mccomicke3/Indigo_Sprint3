@@ -29,7 +29,7 @@ public class GUIManager : MonoBehaviour
     [SerializeField]
     Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null;
     [SerializeField]
-    Text gameOverText = null, timerText = null, damageText = null;
+    Text gameOverText = null, timerText = null, damageText = null, knownCombosText = null;
     [SerializeField]
     Slider enemyHealthBar = null, playerHealthBar = null; Slider timerSlider;
     [SerializeField]
@@ -41,8 +41,6 @@ public class GUIManager : MonoBehaviour
     [Header("Menu")]
     [SerializeField]
     GameObject pauseMenu = null, loseMenu = null, winMenu = null;
-    
-
 
 
     float pHealth = 0, eHealth = 0;
@@ -52,14 +50,15 @@ public class GUIManager : MonoBehaviour
     void Start()
     {
 
+
     }
 
     // Update is called once per frame
     void Update()
     {
-
         
     }
+
     // GUI Control
     public void SetPlayerMaxHP(float maxHp)
     {
@@ -103,6 +102,43 @@ public class GUIManager : MonoBehaviour
         damageText.text = damage.ToString();
         //damageText.gameObject.SetActive(false);
     }
+
+    public void UpdateKnownComboText(List<string> knownCombo)
+    {
+        string outstring = "";
+        foreach (string weakness in knownCombo) {
+            string temp = "";
+            foreach(char move in weakness)
+            {
+                string movename = "";
+                switch (move)
+                {
+                    case '0':
+                        movename = "P ";
+                        break;
+                    case '1':
+                        movename = "K ";
+                        break;
+                    case '2':
+                        movename = "Py ";
+                        break;
+                    case '3':
+                        movename = "T ";
+                        break;
+                    case '*':
+                        movename = "* ";
+                        break;
+                }
+                temp = temp + movename;
+            }
+
+
+
+            outstring = outstring + temp + "\n";
+                }
+        knownCombosText.text = outstring;
+    }
+
     /*-------------------------------------------------------------------------
      * changes the color on enemy health bar, meant to make it more clear when
      * damage is dealt to the enemy. if true highlights the color, otherwise
