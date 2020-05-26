@@ -19,7 +19,7 @@ using UnityEngine;
 -------------------------------------------------------------------------*/
 public class Enemy : ScriptableObject
 {
-    public int enemyHp = 100;
+    public int enemyHp = 300;
     public string[] nameList = { "Tom", "Geoff", "Jack", "Jeremy", "Trevor", "Ryan", "Bob", "Billy", "Kevin", "Jeff", "Steve", "Andrew", "Vincent", "Eric", "Brock", "Brocc", "Ash" };
     public string enemyName = "Brocc";
     public List<string> weaknesses = null;
@@ -180,13 +180,49 @@ public class Enemy : ScriptableObject
         weaknesses = WeaknessGenerator();
 
     }
+    /*-------------------------------------------------------------------------
+     * returns the number of a specific combo a user input contains
+     * -------------------------------------------------------------------------*/
+
+
+    public int NumCombo(string weakness, string userinput)
+    {
+        if (userinput.Length == 0) return 0;
+        int numcount = ((userinput.Length - userinput.Replace(weakness, "").Length) / weakness.Length);
+        return numcount;
+    }
+    /*-------------------------------------------------------------------------
+     * returns a dictionary containing the information on the number how many
+     * times a combo occurs in a given userinput. 
+     * the actual weaknesses are the keys and the values are the values. 
+     -------------------------------------------------------------------------*/
+        public Dictionary<string, int> TotalNumCombo(string userinput)
+    {
+        Dictionary<string, int> outdict = new Dictionary<string, int>();
+        
+        foreach (string weakness in weaknesses)
+        {
+            if (userinput.Length == 0) 
+            {
+                outdict.Add(weakness, 0);
+                break;
+            }
+
+            int numcount = 0;
+            numcount = ((userinput.Length - userinput.Replace(weakness, "").Length) / weakness.Length);
+            outdict.Add(weakness, numcount);
+
+        }
+
+        return outdict;
+    }
+
 
     /*-------------------------------------------------------------------------
      * returns a integer equal to the number of weaknesses which the inputted
      * string contains. returns 0 if there are no weaknesses within the 
      * inputted values.
     -------------------------------------------------------------------------*/
-
 
     public int IsCombo(string userinput)
     {
@@ -202,6 +238,8 @@ public class Enemy : ScriptableObject
      * returns true or false depending on whether the input value contains
      * all of the enemy weaknesses 
     -------------------------------------------------------------------------*/
+
+
     public bool IsFinalCombo(string userinput)
     {
         if (IsCombo(userinput) == weaknesses.Count) return true;
@@ -305,7 +343,10 @@ public class Enemy : ScriptableObject
 
     }
 
-
+    public void DealDamage(int damage)
+    {
+        enemyHp -= damage;
+    }
 
 
 

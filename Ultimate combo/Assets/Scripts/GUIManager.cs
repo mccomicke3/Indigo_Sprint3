@@ -28,9 +28,12 @@ public class GUIManager : MonoBehaviour
     SpriteRenderer spriteRef = null, headRef = null, bodyRef = null, legsRef = null;
     [SerializeField]
     Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null;
+    [SerializeField]
     Text gameOverText = null, timerText = null, damageText = null;
     [SerializeField]
     Slider enemyHealthBar = null, playerHealthBar = null; Slider timerSlider;
+    [SerializeField]
+    Image enemyHpFill;
     [SerializeField]
     GameObject enemyHighlight = null;
     [SerializeField]
@@ -38,9 +41,10 @@ public class GUIManager : MonoBehaviour
     [Header("Menu")]
     [SerializeField]
     GameObject pauseMenu = null, loseMenu = null, winMenu = null;
+    
 
-   
-      
+
+
     float pHealth = 0, eHealth = 0;
     float colorDelay = 0.5f;
 
@@ -78,7 +82,42 @@ public class GUIManager : MonoBehaviour
     {
         if (enemyHighlight != null) enemyHighlight.SetActive(show);
     }
+    /*-------------------------------------------------------------------------
+     * Updates the damage text
+     * If it is given a negative value, it will hide the text instead of just
+     * displaying it. 
+    -------------------------------------------------------------------------*/
 
+    public void UpdateDamageText(int damage)
+    {
+
+        if (damageText == null) return;
+        if (!damageText.IsActive()){
+            damageText.gameObject.SetActive(true);
+        }
+        if (damage < 0)
+        {
+            damageText.gameObject.SetActive(false);
+            return;
+        }
+        damageText.text = damage.ToString();
+        //damageText.gameObject.SetActive(false);
+    }
+    /*-------------------------------------------------------------------------
+     * changes the color on enemy health bar, meant to make it more clear when
+     * damage is dealt to the enemy. if true highlights the color, otherwise
+     * will set it to its original value. 
+    -------------------------------------------------------------------------*/
+    public void HighlightEnemyHealth(bool status)
+    {
+        if (status) {
+            enemyHpFill.color = new Color(255, 150, 150);
+        }
+        else
+        {
+            enemyHpFill.color = new Color(255, 0, 0);
+        }
+    }
 
 
     // Scene/Game Control
@@ -122,20 +161,24 @@ public class GUIManager : MonoBehaviour
     {
         while (Mathf.Abs(enemyHealthBar.value - eHealth) > 0.01f)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.05f);
             if (enemyHealthBar != null)
             {
-                enemyHealthBar.value = Mathf.Lerp(enemyHealthBar.value, eHealth, 100);
+                enemyHealthBar.value = Mathf.Lerp(enemyHealthBar.value, eHealth, 0.8f);
             }
+            
         }
+        enemyHealthBar.value = eHealth;
+
         while (Mathf.Abs(playerHealthBar.value - pHealth) > 0.01f)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             if (playerHealthBar != null)
             {
-                playerHealthBar.value = Mathf.Lerp(playerHealthBar.value, pHealth, 3);
+                playerHealthBar.value = Mathf.Lerp(playerHealthBar.value, pHealth, 0.8f);
             }
         }
+        playerHealthBar.value = pHealth;
     }
     public void EnemyBodySprite(BodyPart part, Sprite sprite)
     {

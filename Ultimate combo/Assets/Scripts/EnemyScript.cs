@@ -75,7 +75,11 @@ public class EnemyScript : MonoBehaviour
 
         if ((test && Input.GetKey(testKey)) && testDelay < Time.time)
         {
-            Enemyturn();
+            Dictionary<string, int> testdict = enemyInfo.TotalNumCombo(attackSequence);
+            foreach(string weakness in enemyInfo.weaknesses)
+            {
+                Debug.Log(weakness + ": " + testdict[weakness].ToString());
+            }
             testDelay = Time.time + testDelay;
         }
 
@@ -159,8 +163,8 @@ public class EnemyScript : MonoBehaviour
         knownWeaknesses = enemyInfo.UpdateKnownWeaknesses(knownWeaknesses, "");
         foreach (string weakness in enemyInfo.weaknesses) Debug.Log(weakness);
 
-        Debug.Log("--------------before knownweaknesses----------------: ");
-        foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
+        //Debug.Log("--------------before knownweaknesses----------------: ");
+        //foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
 
         Debug.Log("attackinput: " + attackSequence);
         Debug.Log("Number of combos contained: " + enemyInfo.IsCombo(attackSequence));
@@ -170,6 +174,7 @@ public class EnemyScript : MonoBehaviour
         Debug.Log("--------------after knownweaknesses----------------: ");
         foreach (string weakness in knownWeaknesses) Debug.Log(weakness);
 
+        StartCoroutine(DealDamage(attackSequence));
         ClearSequence();
         
         if (CheckWin())
@@ -191,6 +196,129 @@ public class EnemyScript : MonoBehaviour
         }
         
     }
+
+    /*-------------------------------------------------------------------------
+     * Deals an amount of damage for each attack to the enemy,
+     * Will give an aplified effect upon completion of the subcombos, 
+     * if the inputed string has all subcombos, it will deal a large amount 
+     * of damage.
+     * repsonsible for:
+     * updating damage text
+     * dealing damage
+     * 
+     * returns void
+    -------------------------------------------------------------------------*/
+
+    IEnumerator DealDamage(string inputcombo)
+    {
+        string potentialcombo = "";
+        int damagedealt;
+        int punchbasedamage = 4;
+        int kickbasedamage = 3;
+        int parrybasedamage = 1;
+        int tauntbasedamage = 0;
+        int punchcomboscaling = 5;
+        int kickcomboscaling = 8;
+        int parrycomboscaling = 6;
+        int tauntcomboscaling = 1;
+        Dictionary<string, int> comboinfo;
+        Dictionary<string, int> prevcomboinfo = null;
+
+        int attack = 0; //for testing
+
+        foreach(char move in inputcombo)
+        {
+
+            damagedealt = 0;
+            potentialcombo = potentialcombo + move;
+            comboinfo = enemyInfo.TotalNumCombo(potentialcombo);
+
+            attack += 1; //for testing
+            Debug.Log("attack number: " + attack.ToString());//for testing
+
+            switch (move)
+            {
+                case '0': //punch
+                    foreach (string weakness in enemyInfo.weaknesses)//determining if there is a new combo
+                    {
+                        if (prevcomboinfo == null) break;
+                        if (comboinfo[weakness] > prevcomboinfo[weakness])//combo acheived
+                        {
+                            damagedealt += (punchcomboscaling * weakness.Length); //combo effect
+                            Debug.Log("punchcombo");
+                        }
+                    }
+
+                    damagedealt += punchbasedamage;
+                    guiManager.UpdateDamageText(damagedealt); //if its a new combo give a bonus
+                    break;
+
+                case '1': //kick
+                    foreach (string weakness in enemyInfo.weaknesses)//determining if there is a new combo
+                    {
+                        if (prevcomboinfo == null) break;
+                        if (comboinfo[weakness] > prevcomboinfo[weakness])//combo acheived
+                        {
+                            damagedealt += (kickcomboscaling * weakness.Length); //combo effect
+                            Debug.Log("kickcombo");
+                        }
+                    }
+
+                    damagedealt += kickbasedamage;
+                    guiManager.UpdateDamageText(damagedealt); //if its a new combo give a bonus
+                    break;
+
+                case '2': //parry
+                    foreach (string weakness in enemyInfo.weaknesses)//determining if there is a new combo
+                    {
+                        if (prevcomboinfo == null) break;
+                        if (comboinfo[weakness] > prevcomboinfo[weakness])//combo acheived
+                        {
+                            damagedealt += (parrycomboscaling * weakness.Length); //combo effect
+                            Debug.Log("parrycombo");
+                        }
+                    }
+
+                    damagedealt += parrybasedamage;
+                    guiManager.UpdateDamageText(damagedealt); //if its a new combo give a bonus
+                    break;
+
+                case '3': //taunt
+                    foreach (string weakness in enemyInfo.weaknesses)//determining if there is a new combo
+                    {
+                        if (prevcomboinfo == null) break;
+                        if (comboinfo[weakness] > prevcomboinfo[weakness])//combo acheived
+                        {
+                            damagedealt += (tauntcomboscaling * weakness.Length); //combo effect
+                            Debug.Log("tauntcombo");
+                        }
+                    }
+
+                    damagedealt += tauntbasedamage;
+                    guiManager.UpdateDamageText(damagedealt); //if its a new combo give a bonus
+                    break;
+
+            }
+            prevcomboinfo = comboinfo;
+            guiManager.HighlightEnemyHealth(true);
+
+            yield return new WaitForSeconds(0.1f);
+            enemyInfo.DealDamage(damagedealt);
+            guiManager.HighlightEnemyHealth(false);
+            guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
+            yield return new WaitForSeconds(0.3f);
+
+            guiManager.UpdateDamageText(-1);
+            yield return new WaitForSeconds(0.2f);
+
+
+        }
+
+        guiManager.UpdateDamageText(-1);
+    }
+
+
+
 
     public bool CheckWin()
     {
@@ -238,10 +366,10 @@ public class EnemyScript : MonoBehaviour
                         attackName = "K";
                         break;
                     case '2':
-                        attackName = "T";
+                        attackName = "P";
                         break;
                     case '3':
-                        attackName = "G";
+                        attackName = "T";
                         break;
                 }
                 tempText += attackName;
