@@ -6,8 +6,6 @@ public class Audio : MonoBehaviour
 {
     // AudioSource for music
     private AudioSource music;
-    // Shows music number for testing
-    public int currentnum;
     // List of all music clips
     public List<AudioClip> allmusic;
     // List of all sound effect sources
@@ -16,63 +14,66 @@ public class Audio : MonoBehaviour
     public List<AudioClip> alleffects;
     // Tracking for which audio source the next clip is going to be played on
     public int effectnum;
+    // Shows music number for testing
+    public int musicnum;
 
     // Start is called before the first frame update
     void Start()
     {
         effectnum = 0;
         music = GameObject.Find("Music Player").GetComponent<AudioSource>();
+        music.clip = allmusic[0];
         music.Play();
     }
 
     // Used to change the music
-    void MChange(int soundnum)
+    public void MChange(int soundnum)
     {
-        currentnum = soundnum;
+        musicnum = soundnum;
         music.clip = allmusic[soundnum];
     }
 
     // Used to play the music
-    void MPlay()
+    public void MPlay()
     {
         music.Play();
     }
 
     // Used to pause the music
-    void MPause()
+    public void MPause()
     {
         music.Pause();
     }
 
-    void Punch()
+    public void Punch()
     {
         effectsources[effectnum].clip = alleffects[0];
         effectsources[effectnum].Play();
         effectnum += 1;
-        if (effectnum == 9) effectnum = 0;
+        if (effectnum == effectsources.Count) effectnum = 0;
     }
 
-    void Kick()
+    public void Kick()
     {
         effectsources[effectnum].clip = alleffects[1];
         effectsources[effectnum].Play();
         effectnum += 1;
-        if (effectnum == 9) effectnum = 0;
+        if (effectnum == alleffects.Capacity) effectnum = 0;
     }
 
-    void Grapple()
+    public void Grapple()
     {
         effectsources[effectnum].clip = alleffects[2];
         effectsources[effectnum].Play();
         effectnum += 1;
-        if (effectnum == 9) effectnum = 0;
+        if (effectnum == alleffects.Capacity) effectnum = 0;
     }
 
-    void Taunt()
+    public void Taunt()
     {
         effectsources[effectnum].clip = alleffects[3];
         effectsources[effectnum].Play();
         effectnum += 1;
-        if (effectnum == 9) effectnum = 0;
+        if (effectnum == alleffects.Capacity) effectnum = 0;
     }
 }
