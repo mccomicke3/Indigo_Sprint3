@@ -29,7 +29,7 @@ public class GUIManager : MonoBehaviour
     [SerializeField]
     Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null;
     [SerializeField]
-    Text gameOverText = null, timerText = null, damageText = null, knownCombosText = null;
+    Text gameOverText = null, timerText = null, damageText = null, knownCombosText = null, flavourText;
     [SerializeField]
     Slider enemyHealthBar = null, playerHealthBar = null; Slider timerSlider;
     [SerializeField]
@@ -231,15 +231,29 @@ public class GUIManager : MonoBehaviour
                 break;
         }
     }
+
+    public void UpdateFlavourText(string newtext)
+    {
+        if (newtext == "") flavourText.gameObject.SetActive(false);
+        else
+        {
+            flavourText.gameObject.SetActive(true);
+            flavourText.text = newtext;
+        }
+
+    }
+
     public void UpdateAttackSequenceText(string attackSequence)
     {
         if (attackSequenceText != null) attackSequenceText.text = attackSequence;
     }
     public void EndGame(bool win)
     {
-        if (loseMenu == null || gameOverText == null) return;
-        if (!loseMenu.activeInHierarchy) ToggleMenu();
-        gameOverText.text = (win)? "You Win!" : "Game Over";
+        if (win)
+        {
+            winMenu.SetActive(true);
+        }
+        loseMenu.SetActive(true);
     }
     string GetTimeText(float time)
     {

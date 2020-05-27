@@ -173,13 +173,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4380217945577997791}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9cde3b98dfa57b46bc195928adb88b2, type: 3}
+  m_Script: {fileID: 11500000, guid: 2fac63e0458f1b94eb8dd8badcf2ae1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentnum: 0
   allmusic:
-  - {fileID: 8300000, guid: 7023b4f79d7b40748b006daf8004daa0, type: 3}
-  - {fileID: 8300000, guid: f71063f4df4fc3843acff10b38f753c2, type: 3}
+  - {fileID: 8300000, guid: 4092fa554a7bac045b85a6b6c06fcb13, type: 3}
   effectsources:
   - {fileID: 939632458017616801}
   - {fileID: 582483542899314868}
@@ -187,8 +185,11 @@ MonoBehaviour:
   - {fileID: 4169647561393202737}
   - {fileID: 1912001691807934303}
   alleffects:
-  - {fileID: 8300000, guid: 7d83fcb3e1228834e82270b45b734ab8, type: 3}
+  - {fileID: 8300000, guid: 1541f98491d679744ad75765db58e910, type: 3}
+  - {fileID: 8300000, guid: 2f86c79be78c1994ea92b2d108c854c5, type: 3}
+  - {fileID: 8300000, guid: e26d3d6d25a57cd409778b99e7d29405, type: 3}
   effectnum: 0
+  musicnum: 0
 --- !u!82 &939632458017616801
 AudioSource:
   m_ObjectHideFlags: 0
@@ -200,8 +201,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -296,8 +297,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -392,8 +393,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -488,8 +489,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -584,8 +585,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0

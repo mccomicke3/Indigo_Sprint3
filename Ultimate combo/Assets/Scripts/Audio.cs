@@ -75,5 +75,24 @@ public class Audio : MonoBehaviour
         effectsources[effectnum].Play();
         effectnum += 1;
         if (effectnum == alleffects.Capacity) effectnum = 0;
+
     }
+
+    public void Combo()
+    {
+        effectsources[effectnum].clip = alleffects[1];
+        effectsources[effectnum].Play();
+        effectnum += 1;
+        if (effectnum == effectsources.Count) effectnum = 0;
+    }
+
+    public void BigCombo()
+    {
+        effectsources[effectnum].clip = alleffects[2];
+        effectsources[effectnum].Play();
+        effectnum += 1;
+        if (effectnum == effectsources.Count) effectnum = 0;
+    }
+
+
 }

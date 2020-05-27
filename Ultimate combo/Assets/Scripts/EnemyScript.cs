@@ -27,6 +27,9 @@ public class EnemyScript : MonoBehaviour
     GUIManager guiManager = null; //This is the GUI script
 
     [SerializeField]
+    Audio audiomanager = null; //the audio manager
+
+    [SerializeField]
     Enemy enemyInfo = null; //Holds the information about the current enemy
 
     [SerializeField]
@@ -62,11 +65,22 @@ public class EnemyScript : MonoBehaviour
 
 
 
+
     // Start is called before the first frame update
     void Start()
     {
-        NewEnemy();
-        if (guiManager != null) guiManager.SetPlayerMaxHP(playerHp);
+        guiManager.SetPlayerMaxHP(playerHp);
+        RestorePlayerHealth();
+        enemyInfo.enemyHp = 200;
+        timedTurnLength = timedTurnDefault;
+        if (enemyInfo == null) NewEnemy();
+        else
+        {
+            guiManager.SetEnemyInfo(enemyInfo);
+            currentWeaknesses = enemyInfo.weaknesses;
+            guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
+            knownWeaknesses = enemyInfo.CensoredWeaknesses();
+        }
 
         StartCoroutine("TimedTurn");
         
@@ -92,8 +106,44 @@ public class EnemyScript : MonoBehaviour
         }
 
     }
-    
+
     //Generates a New enemy object
+
+    public string ComboNumToString(string moves)
+    {
+        string tempText = ""; //holds the current moves entered
+        for (int i = 0; i < moves.Length; i++)
+        {
+            if (i > 0)
+            {
+                tempText += " ";
+            }
+
+
+            string attackName = "";
+            switch (moves[i])
+            {
+                case '0':
+                    attackName = "P";
+                    break;
+                case '1':
+                    attackName = "K";
+                    break;
+                case '2':
+                    attackName = "Py";
+                    break;
+                case '3':
+                    attackName = "T";
+                    break;
+                case '*':
+                    attackName = "*";
+                    break;
+
+            }
+            tempText = tempText + attackName;
+        }
+        return tempText;
+    }
 
     public void NewEnemy()
     {
@@ -237,6 +287,8 @@ public class EnemyScript : MonoBehaviour
         int tauntcomboscaling = 1;
         int parrycount = 0;
 
+        bool islastcombomove = false;
+
         Dictionary<string, int> comboinfo;
         Dictionary<string, int> prevcomboinfo = null;
 
@@ -249,11 +301,13 @@ public class EnemyScript : MonoBehaviour
             potentialcombo = potentialcombo + move;
             comboinfo = enemyInfo.TotalNumCombo(potentialcombo);
 
-            attack += 1; //for testing
-            Debug.Log("attack number: " + attack.ToString());//for testing
-
+            islastcombomove = false;
+            //attack += 1; //for testing
+            //Debug.Log("attack number: " + attack.ToString());//for testing
+            audiomanager.Punch();
             switch (move)
             {
+
                 case '0': //punch
                     foreach (string weakness in enemyInfo.weaknesses)//determining if there is a new combo
                     {
@@ -262,10 +316,14 @@ public class EnemyScript : MonoBehaviour
                         {
                             damagedealt += (punchcomboscaling * weakness.Length); //combo effect
                             damagedealt += 10; // punch combos just deal extra flat damage.
-                            Debug.Log("punchcombo");
+                            guiManager.UpdateFlavourText("Punch Combo\n" + ComboNumToString(weakness) + "\nExtra Damage!");
+                            yield return new WaitForSeconds(1f);
+                            guiManager.UpdateFlavourText("");
+                            islastcombomove = true;
+                            //Debug.Log("punchcombo");
                         }
                     }
-
+                    if (islastcombomove) audiomanager.Combo();
                     damagedealt += punchbasedamage;
                     guiManager.UpdateDamageText(damagedealt); //if its a new combo give a bonus
                     break;
@@ -278,10 +336,15 @@ public class EnemyScript : MonoBehaviour
                         {
                             damagedealt += (kickcomboscaling * weakness.Length); //combo effect
                             timedTurnLength += 3 * weakness.Length; // kick adds more time
-                            Debug.Log("kickcombo");
+                            guiManager.UpdateFlavourText("Kick Combo\n" + ComboNumToString(weakness) +"\nExtra Time!");
+                            yield return new WaitForSeconds(1f);
+                            guiManager.UpdateFlavourText("");
+                            islastcombomove = true;
+
+                            //Debug.Log("kickcombo");
                         }
                     }
-
+                    if (islastcombomove) audiomanager.Combo();
                     damagedealt += kickbasedamage;
                     guiManager.UpdateDamageText(damagedealt); //if its a new combo give a bonus
                     break;
@@ -294,9 +357,15 @@ public class EnemyScript : MonoBehaviour
                         {
                             damagedealt += (parrycomboscaling * weakness.Length); //combo effect
                             parrycount += 1; //parry combo prevents 1 attack from the enemy
-                            Debug.Log("parrycombo");
+                            guiManager.UpdateFlavourText("Parry Combo\n"+ ComboNumToString(weakness) + "\nParry Next Attack!");
+                            yield return new WaitForSeconds(1f);
+                            guiManager.UpdateFlavourText("");
+                            islastcombomove = true;
+                            //Debug.Log("parrycombo");
                         }
                     }
+
+                    if (islastcombomove) audiomanager.Combo();
 
                     damagedealt += parrybasedamage;
                     guiManager.UpdateDamageText(damagedealt); //if its a new combo give a bonus
@@ -311,34 +380,64 @@ public class EnemyScript : MonoBehaviour
                             damagedealt += (tauntcomboscaling * weakness.Length); //combo effect
                             playerHp += 4 * weakness.Length; //taunt combo provides heal effect
                             guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
-                            Debug.Log("tauntcombo");
+
+                            guiManager.UpdateFlavourText("Taunt Combo\n" + ComboNumToString(weakness) +"\nHeal!");
+                            yield return new WaitForSeconds(1f);
+                            guiManager.UpdateFlavourText("");
+                            islastcombomove = true; 
+
+                            //Debug.Log("tauntcombo");
                         }
                     }
 
+                    if (islastcombomove) audiomanager.Combo();
                     damagedealt += tauntbasedamage;
                     guiManager.UpdateDamageText(damagedealt); //if its a new combo give a bonus
                     break;
 
             }
-            prevcomboinfo = comboinfo;
-            guiManager.HighlightEnemyHealth(true);
 
-            yield return new WaitForSeconds(0.1f);
-            enemyInfo.DealDamage(damagedealt);
-            guiManager.HighlightEnemyHealth(false);
-            guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
-            yield return new WaitForSeconds(0.3f);
+            if (enemyInfo.IsFinalCombo(potentialcombo))
+            {
+                enemyInfo.DealDamage(50);
+                guiManager.UpdateFlavourText("Ultimate Combo\n EXTREMEDAMAGE");
+                guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
+                guiManager.UpdateDamageText(damagedealt + 50);
+                audiomanager.BigCombo();
+                yield return new WaitForSeconds(1f);
+                guiManager.UpdateFlavourText("");
+                //final combo flavour
+                prevcomboinfo = comboinfo;
+            }
 
-            guiManager.UpdateDamageText(-1);
-            yield return new WaitForSeconds(0.2f);
+            else
+            {
+
+                prevcomboinfo = comboinfo;
+                guiManager.HighlightEnemyHealth(true);
+
+                yield return new WaitForSeconds(0.1f);
+                enemyInfo.DealDamage(damagedealt);
+                guiManager.HighlightEnemyHealth(false);
+                guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
+                yield return new WaitForSeconds(0.3f);
+
+                guiManager.UpdateDamageText(-1);
+                yield return new WaitForSeconds(0.2f);
+
+            }
+
 
         }
-        if (CheckWin())
-        {
-            //resolve success
-        }
+
+
+
+
+        if (CheckWin()) StartCoroutine("HandleVictory");
+        if (CheckLoss()) StartCoroutine("Handleloss");
 
         guiManager.UpdateDamageText(-1);
+
         StartCoroutine(EnemyAttack(parrycount));
     }
 
@@ -349,7 +448,7 @@ public class EnemyScript : MonoBehaviour
         StopCoroutine("DealDamage");
         for (int i = 0; i < enemyInfo.enemynumattacks; i++)
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.7f);
             if (parrycount > 0)
             {
                 parrycount -= 1;
@@ -359,7 +458,10 @@ public class EnemyScript : MonoBehaviour
                 enemyInfo.DealDamage(3);
                 guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
                 guiManager.HighlightEnemyHealth(false);
-                Debug.Log("Attack Parried");
+                guiManager.UpdateFlavourText("Attack Parried");
+                yield return new WaitForSeconds(1f);
+                guiManager.UpdateFlavourText("");
+                //Debug.Log("Attack Parried");
 
             }
 
@@ -372,16 +474,31 @@ public class EnemyScript : MonoBehaviour
 
         }
         
-        if (CheckLoss())
-        {
-            //resolve Loss
-        }
+        if (CheckLoss()) StartCoroutine("Handleloss");
+       
+        if (CheckWin()) StartCoroutine("HandleVictory");
 
         else StartCoroutine("TimedTurn");
 
     }
 
-       
+    IEnumerator HandleVictory()
+    {
+        StopCoroutine("TimedTurn");
+        StopCoroutine("EnemyAttack");
+        StopCoroutine("DealDamage");
+        yield return new WaitForSeconds(0.4f);
+        guiManager.EndGame(true);
+    }
+
+    IEnumerator HandleLoss()
+    {
+        StopCoroutine("TimedTurn");
+        StopCoroutine("EnemyAttack");
+        StopCoroutine("DealDamage");
+        yield return new WaitForSeconds(0.4f);
+        guiManager.EndGame(false);
+    }
 
 
     public bool CheckWin()
@@ -457,7 +574,7 @@ public class EnemyScript : MonoBehaviour
         playerHp = 50;
         guiManager.StartUpdateHealth(enemyInfo.enemyHp, playerHp);
     }
-
+    
 
     /*-------------------------------------------------------------------------
      * Coroutine for keeping track of the amount of time remaining on the 

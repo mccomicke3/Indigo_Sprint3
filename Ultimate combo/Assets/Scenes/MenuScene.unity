@@ -511,7 +511,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -673,7 +673,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1267297375}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 158d3b8a7d582614bbbd7c442a76479d, type: 3}
+  m_Script: {fileID: 11500000, guid: e5578e3973115d7438ee32cce3b12103, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fadetoblack: {fileID: 0}
