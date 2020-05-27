@@ -19,11 +19,12 @@ using UnityEngine;
 -------------------------------------------------------------------------*/
 public class Enemy : ScriptableObject
 {
-    public int enemyHp = 100;
+    public int enemyHp = 300;
     public string[] nameList = { "Tom", "Geoff", "Jack", "Jeremy", "Trevor", "Ryan", "Bob", "Billy", "Kevin", "Jeff", "Steve", "Andrew", "Vincent", "Eric", "Brock", "Brocc", "Ash" };
     public string enemyName = "Brocc";
     public List<string> weaknesses = null;
     public Sprite enemyImage = null, enemyHead = null, enemyBody = null, enemyLegs = null;
+    public int enemynumattacks = 4, enemydamage = 5;
 
     public Enemy() //class constructor
     {
@@ -170,42 +171,182 @@ public class Enemy : ScriptableObject
 
     }
 
-    /*
-   public List<Weaknesses> ValidateInput(List<Weaknesses> weaknessList, int[] inputCombo)
-   {
-       List<Weaknesses> valid = new List<Weaknesses>();
-       foreach (Weaknesses weakness in weaknessList)
-       {
-           if (inputCombo.Length < weakness.weaknessSet.Count)
-           {
-               // unsure if the condition expression is correctly implemented
-               for (int i = 0; i< (inputCombo.Length - weakness.weaknessSet.Count + 1); i++)
-               {
-                   for (int c = 0; c < weakness.weaknessSet.Count; c++)
-                   {
-                       //????? im lost.
-                       //if (inputCombo[i] == weakness.weaknessSet[c])
-                   }
-               }
-           }
-       }
-       return valid;
-   }
-   */
 
-
-
+    /*-------------------------------------------------------------------------
+     * randomizes the weaknesses and name of the Enemy. 
+     -------------------------------------------------------------------------*/
     public void Randomize()
     {
         enemyName = nameList[Random.Range(0, nameList.Length)];
         weaknesses = WeaknessGenerator();
 
+    }
+    /*-------------------------------------------------------------------------
+     * returns the number of a specific combo a user input contains
+     * -------------------------------------------------------------------------*/
+
+
+    public int NumCombo(string weakness, string userinput)
+    {
+        if (userinput.Length == 0) return 0;
+        int numcount = ((userinput.Length - userinput.Replace(weakness, "").Length) / weakness.Length);
+        return numcount;
+    }
+    /*-------------------------------------------------------------------------
+     * returns a dictionary containing the information on the number how many
+     * times a combo occurs in a given userinput. 
+     * the actual weaknesses are the keys and the values are the values. 
+     -------------------------------------------------------------------------*/
+        public Dictionary<string, int> TotalNumCombo(string userinput)
+    {
+        Dictionary<string, int> outdict = new Dictionary<string, int>();
+        
+        foreach (string weakness in weaknesses)
+        {
+            if (userinput.Length == 0) 
+            {
+                outdict.Add(weakness, 0);
+                break;
+            }
+
+            int numcount = 0;
+            numcount = ((userinput.Length - userinput.Replace(weakness, "").Length) / weakness.Length);
+            outdict.Add(weakness, numcount);
+
+        }
+
+        return outdict;
+    }
+
+
+    /*-------------------------------------------------------------------------
+     * returns a integer equal to the number of weaknesses which the inputted
+     * string contains. returns 0 if there are no weaknesses within the 
+     * inputted values.
+    -------------------------------------------------------------------------*/
+
+    public int IsCombo(string userinput)
+    {
+        int successnum = 0;
+        foreach (string weakness in weaknesses)
+        {
+            if (userinput.Contains(weakness)) successnum += 1;
+            //Debug.Log("searching for :" + weakness);
+        }
+        return successnum;
+    }
+    /*-------------------------------------------------------------------------
+     * returns true or false depending on whether the input value contains
+     * all of the enemy weaknesses 
+    -------------------------------------------------------------------------*/
+
+
+    public bool IsFinalCombo(string userinput)
+    {
+        if (IsCombo(userinput) == weaknesses.Count) return true;
+        return false;
+    }
+
+    /*-------------------------------------------------------------------------
+     * updates the data held in the known weaknesses baised on the input moves
+     * of the user and the currently known weaknesses of the user. 
+     * - * represents an unknown move in the sequence
+     * - 0, 1, 2, 3 represent known moves in the sequence
+     * returns the updated list of strings known to the user.
+    -------------------------------------------------------------------------*/
+    public List<string> UpdateKnownWeaknesses(List<string> knownweaknesses, string userinput)
+    {
+        
+        if (knownweaknesses.Count == 0) return CensoredWeaknesses();
+        List<string> updatedlist = new List<string>();
+
+        for(int weaknessindex = 0 ; weaknessindex < weaknesses.Count; weaknessindex++)
+        {
+            string updatedweakness = UpdateWeakness(userinput, knownweaknesses[weaknessindex],
+               weaknesses[weaknessindex]);
+            updatedlist.Add(updatedweakness);
+        }
+
+        return updatedlist;
+    }
+
+    /*-------------------------------------------------------------------------
+    returns a list of censored weaknesses, that is a list of strings which are
+    simply asterisks in the same order and number as the order and number
+    of weaknesses which the enemy has.
+    -------------------------------------------------------------------------*/
+    public List<string> CensoredWeaknesses()
+    {
+        List<string> outlist = new List<string>();
+        foreach (string weakness in weaknesses)
+        {
+            string outstring = "";
+            foreach (char move in weakness)
+            {
+                outstring += "*";
+            }
+            outlist.Add(outstring);
+        }
+        return outlist;
+    }
+
+    /*-------------------------------------------------------------------------
+     * helper function for UpdateKnownWeakness
+     * updates the data held in an individual string, being of the form
+     * of asterisks and numbers depending on how much information the player
+     * has availible to them at any given moment.
+     * ie. "01**" or "****" or "0123"
+     * parameters are:
+     * userinput ie. 10232100
+     * knownweakness ie. 00**
+     * actualweakness ie. 0022
+     * returns the updated string.
+    -------------------------------------------------------------------------*/
+
+
+    string UpdateWeakness(string userinput, string knownweakness, string actualweakness)
+        
+    {
+        if (userinput.Contains(actualweakness)) return actualweakness;
+        if (knownweakness == actualweakness) return actualweakness;
+        string teststring = "";
+        int success = 0;
+        for (int i = 0; i < actualweakness.Length; i++) 
+        { // searches and sees if there are newly discovered moves
+            teststring = teststring + actualweakness[i];
+            if (userinput.Contains(teststring))
+            {
+                success++;
+            }
+            else break;
+
+        }
+        if (success == 0) //If no new moves are discovered
+        {
+            return knownweakness;
+        }
+        else //if new moves are discovered
+        {
+            knownweakness = "";
+
+            for (int i = 0; i < success; i++)
+            {
+                knownweakness = knownweakness + actualweakness[i];
+            }
+
+            for (int i = actualweakness.Length - success; i > 0; i--)
+            {
+                knownweakness = knownweakness + "*";
+            }
+
+            return knownweakness;
+        }
 
     }
 
-    public bool IsFinalCombo()
-        {
-        return true;
+    public void DealDamage(int damage)
+    {
+        enemyHp -= damage;
     }
 
 
@@ -215,12 +356,12 @@ public class Enemy : ScriptableObject
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

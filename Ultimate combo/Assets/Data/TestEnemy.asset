@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e132aa43869cbe4db92a30208f97b2b, type: 3}
+  m_Name: TestEnemy
+  m_EditorClassIdentifier: 
+  enemyHp: 167
+  nameList:
+  - Tom
+  - Geoff
+  - Jack
+  - Jeremy
+  - Trevor
+  - Ryan
+  - Bob
+  - Billy
+  - Kevin
+  - Jeff
+  - Steve
+  - Andrew
+  - Vincent
+  - Eric
+  - Brock
+  - Brocc
+  - Ash
+  enemyName: Julian
+  weaknesses:
+  - 10
+  - 023
+  - 3110
+  - 01
+  enemyImage: {fileID: 0}
+  enemyHead: {fileID: 6933386327017989877, guid: d8c0729e141c5e647afb9feaa42187cd,
+    type: 3}
+  enemyBody: {fileID: 5002554865160910227, guid: d8c0729e141c5e647afb9feaa42187cd,
+    type: 3}
+  enemyLegs: {fileID: -8422823296345707691, guid: d8c0729e141c5e647afb9feaa42187cd,
+    type: 3}
+  enemynumattacks: 4
+  enemydamage: 2

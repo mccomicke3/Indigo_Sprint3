@@ -8,9 +8,9 @@ using UnityEngine.SceneManagement;
  * GUIManager
  * Script to make updating the visual elements of the game easier
  * also makes some simple functions for loading scenes and quitting the game'
- * To be attached to: 
- *      The EnemyScript Script
- *      The EventSystem Script
+ * To be a component of 
+ *      The EventSystem
+ * A reference of the eventsystem is to be attached to the enemy object
  * Responsible for:
  * 
  * handling pause menu
@@ -27,39 +27,38 @@ public class GUIManager : MonoBehaviour
     [SerializeField]
     SpriteRenderer spriteRef = null, headRef = null, bodyRef = null, legsRef = null;
     [SerializeField]
-    Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null, gameOverText = null, timerText = null;
+    Text enemyHealthText = null, attackSequenceText = null, enemyNameText = null;
     [SerializeField]
-    Slider enemyHealthBar = null, playerHealthBar = null;
-
-    [Header("Menu")]
+    Text gameOverText = null, timerText = null, damageText = null, knownCombosText = null, flavourText;
     [SerializeField]
-    bool test = false;
+    Slider enemyHealthBar = null, playerHealthBar = null; Slider timerSlider;
     [SerializeField]
-    GameObject pauseMenu = null, gameOverMenu = null;
+    Image enemyHpFill;
+    [SerializeField]
+    GameObject enemyHighlight = null;
     [SerializeField]
     KeyCode pauseKey = KeyCode.Escape;
-    Color startColor = Color.white;
-    float colorDelay = 0;
+    [Header("Menu")]
+    [SerializeField]
+    GameObject pauseMenu = null, loseMenu = null, winMenu = null;
+
+
     float pHealth = 0, eHealth = 0;
+    float colorDelay = 0.5f;
+
     // Start is called before the first frame update
     void Start()
     {
-        if (spriteRef != null) startColor = spriteRef.color;
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(pauseKey))
-        {
-            ToggleMenu(pauseMenu);
-        }
-        if (colorDelay > 0 && colorDelay < Time.time)
-        {
-            spriteRef.color = startColor;
-            colorDelay = 0;
-        }
+        
     }
+
     // GUI Control
     public void SetPlayerMaxHP(float maxHp)
     {
@@ -77,6 +76,86 @@ public class GUIManager : MonoBehaviour
         if (timerText == null) return;
         timerText.text = "Turn: " + GetTimeText(time);
     }
+
+    public void ShowEnemyHighlight(bool show)
+    {
+        if (enemyHighlight != null) enemyHighlight.SetActive(show);
+    }
+    /*-------------------------------------------------------------------------
+     * Updates the damage text
+     * If it is given a negative value, it will hide the text instead of just
+     * displaying it. 
+    -------------------------------------------------------------------------*/
+
+    public void UpdateDamageText(int damage)
+    {
+
+        if (damageText == null) return;
+        if (!damageText.IsActive()){
+            damageText.gameObject.SetActive(true);
+        }
+        if (damage < 0)
+        {
+            damageText.gameObject.SetActive(false);
+            return;
+        }
+        damageText.text = damage.ToString();
+        //damageText.gameObject.SetActive(false);
+    }
+
+    public void UpdateKnownComboText(List<string> knownCombo)
+    {
+        string outstring = "";
+        foreach (string weakness in knownCombo) {
+            string temp = "";
+            foreach(char move in weakness)
+            {
+                string movename = "";
+                switch (move)
+                {
+                    case '0':
+                        movename = "P ";
+                        break;
+                    case '1':
+                        movename = "K ";
+                        break;
+                    case '2':
+                        movename = "Py ";
+                        break;
+                    case '3':
+                        movename = "T ";
+                        break;
+                    case '*':
+                        movename = "* ";
+                        break;
+                }
+                temp = temp + movename;
+            }
+
+
+
+            outstring = outstring + temp + "\n";
+                }
+        knownCombosText.text = outstring;
+    }
+
+    /*-------------------------------------------------------------------------
+     * changes the color on enemy health bar, meant to make it more clear when
+     * damage is dealt to the enemy. if true highlights the color, otherwise
+     * will set it to its original value. 
+    -------------------------------------------------------------------------*/
+    public void HighlightEnemyHealth(bool status)
+    {
+        if (status) {
+            enemyHpFill.color = new Color(255, 150, 150);
+        }
+        else
+        {
+            enemyHpFill.color = new Color(255, 0, 0);
+        }
+    }
+
+
     // Scene/Game Control
     public void LoadScene(int sceneIndex)
     {
@@ -90,9 +169,9 @@ public class GUIManager : MonoBehaviour
     {
         Application.Quit();
     }
-    public void ToggleMenu(GameObject menu)
+    public void ToggleMenu()
     {
-        if (menu != null) menu.SetActive(!menu.activeInHierarchy);
+        if (pauseMenu != null) pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
     }
     public void SetSpriteColor(Color spriteColor)
     {
@@ -106,24 +185,36 @@ public class GUIManager : MonoBehaviour
         pHealth = playerHealth;
         StartCoroutine("UpdateHealth");
     }
+
+
+    /*-------------------------------------------------------------------------
+    Update health coroutine, which sets the values of the healthbars to be 
+    a particular value after a set amount of time. 
+    -------------------------------------------------------------------------*/
+
+
     IEnumerator UpdateHealth()
     {
         while (Mathf.Abs(enemyHealthBar.value - eHealth) > 0.01f)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.05f);
             if (enemyHealthBar != null)
             {
-                enemyHealthBar.value = Mathf.Lerp(enemyHealthBar.value, eHealth, 10);
+                enemyHealthBar.value = Mathf.Lerp(enemyHealthBar.value, eHealth, 0.8f);
             }
+            
         }
+        enemyHealthBar.value = eHealth;
+
         while (Mathf.Abs(playerHealthBar.value - pHealth) > 0.01f)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
             if (playerHealthBar != null)
             {
-                playerHealthBar.value = Mathf.Lerp(playerHealthBar.value, pHealth, 3);
+                playerHealthBar.value = Mathf.Lerp(playerHealthBar.value, pHealth, 0.8f);
             }
         }
+        playerHealthBar.value = pHealth;
     }
     public void EnemyBodySprite(BodyPart part, Sprite sprite)
     {
@@ -140,15 +231,29 @@ public class GUIManager : MonoBehaviour
                 break;
         }
     }
+
+    public void UpdateFlavourText(string newtext)
+    {
+        if (newtext == "") flavourText.gameObject.SetActive(false);
+        else
+        {
+            flavourText.gameObject.SetActive(true);
+            flavourText.text = newtext;
+        }
+
+    }
+
     public void UpdateAttackSequenceText(string attackSequence)
     {
         if (attackSequenceText != null) attackSequenceText.text = attackSequence;
     }
     public void EndGame(bool win)
     {
-        if (gameOverMenu == null || gameOverText == null) return;
-        if (!gameOverMenu.activeInHierarchy) ToggleMenu(gameOverMenu);
-        gameOverText.text = (win)? "You Win!" : "Game Over";
+        if (win)
+        {
+            winMenu.SetActive(true);
+        }
+        loseMenu.SetActive(true);
     }
     string GetTimeText(float time)
     {
